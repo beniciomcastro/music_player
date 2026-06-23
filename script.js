@@ -14,6 +14,13 @@ const mainPlayIcon = document.getElementById("mainPlayIcon");
 const mainProgress = document.getElementById("mainProgress");
 const mainCurrentTime = document.getElementById("mainCurrentTime");
 const mainDuration = document.getElementById("mainDuration");
+const lyricsBox = document.getElementById("lyricsBox");
+const lyricsLine = document.getElementById("lyricsLine");
+const mainLyricsBtn = document.getElementById("mainLyricsBtn");
+
+let lyricsVisible = false;
+let syncedLyrics = [];
+let currentLyricIndex = -1;
 
 const mainPlayBtn = document.getElementById("mainPlayBtn");
 const mainPrevBtn = document.getElementById("mainPrevBtn");
@@ -38,6 +45,7 @@ const libraryNextBtn = document.getElementById("libraryNextBtn");
 const favoritesGrid = document.getElementById("favoritesGrid");
 
 const globalAudio = document.getElementById("globalAudio");
+const volumeControl = document.getElementById("volumeControl");
 const globalCover = document.getElementById("globalCover");
 const globalTitle = document.getElementById("globalTitle");
 const globalArtist = document.getElementById("globalArtist");
@@ -125,6 +133,9 @@ function loadGlobalMusic(index = currentIndex, keepTime = false) {
   if (!keepTime) {
     globalAudio.currentTime = 0;
     localStorage.setItem("playerTime", "0");
+  }
+  if (lyricsVisible) {
+    loadLyrics();
   }
 
   updateVisuals();
@@ -243,6 +254,7 @@ function updateVisuals() {
   updateFavoriteButtons();
   updateActiveButtons();
   updatePlayIcons();
+  loadLyrics();
 }
 
 function updatePlayIcons() {
@@ -311,6 +323,8 @@ function syncProgress() {
   [globalDuration, mainDuration, libraryDuration].forEach((item) => {
     if (item) item.textContent = formatTime(duration);
   });
+
+  updateLyrics();
 
   saveState();
 }
@@ -409,6 +423,11 @@ function initControls() {
   if (mainFavoriteBtn)
     mainFavoriteBtn.addEventListener("click", toggleFavorite);
 
+  if (volumeControl) {
+    volumeControl.addEventListener("input", () => {
+      globalAudio.volume = volumeControl.value / 100;
+    });
+  }
   if (libraryPlayBtn)
     libraryPlayBtn.addEventListener("click", toggleGlobalPlay);
   if (libraryPrevBtn) libraryPrevBtn.addEventListener("click", prevGlobalMusic);
@@ -422,6 +441,9 @@ function initControls() {
   if (globalRepeatBtn) globalRepeatBtn.addEventListener("click", toggleRepeat);
   if (globalFavoriteBtn)
     globalFavoriteBtn.addEventListener("click", toggleFavorite);
+  if (mainLyricsBtn) {
+    mainLyricsBtn.addEventListener("click", toggleLyrics);
+  }
 
   [mainProgress, libraryProgress, globalProgress].forEach((progress) => {
     if (!progress) return;
@@ -519,6 +541,159 @@ async function initApp() {
         </div>
       `;
     }
+  }
+}
+
+async function loadLyrics() {
+  if (!lyricsText) return;
+
+  const music = getCurrentMusic();
+  if (!music) return;
+
+  lyricsText.textContent = "Buscando letra...";
+
+  try {
+    const artist = encodeURIComponent(music.artist);
+    const title = encodeURIComponent(music.title);
+
+    const response = await fetch(
+      `https://lrclib.net/api/search?artist_name=${artist}&track_name=${title}`,
+    );
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar letra");
+    }
+
+    const results = await response.json();
+
+    if (!results || results.length === 0) {
+      throw new Error("Letra não encontrada");
+    }
+
+    const bestMatch = results[0];
+
+    const lyrics =
+      bestMatch.plainLyrics ||
+      bestMatch.syncedLyrics ||
+      "Letra não disponível para esta música.";
+
+    lyricsText.textContent = cleanSyncedLyrics(lyrics);
+  } catch (error) {
+    lyricsText.textContent = "Letra não encontrada para esta música.";
+  }
+}
+
+function cleanSyncedLyrics(lyrics) {
+  return lyrics.replace(/\[\d{2}:\d{2}\.\d{2,3}\]/g, "").trim();
+}
+
+async function loadLyrics() {
+  syncedLyrics = [];
+  currentLyricIndex = -1;
+
+  if (!lyricsLine) return;
+
+  const music = getCurrentMusic();
+  if (!music) return;
+
+  lyricsLine.textContent = "Buscando letra...";
+
+  try {
+    const artist = encodeURIComponent(music.artist);
+    const title = encodeURIComponent(music.title);
+
+    const response = await fetch(
+      `https://lrclib.net/api/search?artist_name=${artist}&track_name=${title}`,
+    );
+
+    const results = await response.json();
+
+    if (!results || results.length === 0) {
+      throw new Error("Letra não encontrada");
+    }
+
+    const bestMatch = results.find((item) => item.syncedLyrics) || results[0];
+
+    if (!bestMatch.syncedLyrics) {
+      lyricsLine.textContent = "Letra sincronizada não disponível.";
+      return;
+    }
+
+    syncedLyrics = parseSyncedLyrics(bestMatch.syncedLyrics);
+    lyricsLine.textContent = "...";
+  } catch (error) {
+    lyricsLine.textContent = "Letra não encontrada.";
+  }
+}
+
+function parseSyncedLyrics(lyrics) {
+  return lyrics
+    .split("\n")
+    .map((line) => {
+      const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/);
+
+      if (!match) return null;
+
+      const minutes = Number(match[1]);
+      const seconds = Number(match[2]);
+      const milliseconds = Number(match[3].padEnd(3, "0"));
+      const text = match[4].trim();
+
+      return {
+        time: minutes * 60 + seconds + milliseconds / 1000,
+        text,
+      };
+    })
+    .filter((line) => line && line.text);
+}
+
+function updateLyrics() {
+  if (!lyricsVisible || syncedLyrics.length === 0 || !globalAudio) return;
+
+  const currentTime = globalAudio.currentTime;
+
+  const index = syncedLyrics.findIndex((line, i) => {
+    const nextLine = syncedLyrics[i + 1];
+    return (
+      currentTime >= line.time && (!nextLine || currentTime < nextLine.time)
+    );
+  });
+
+  if (index === -1 || index === currentLyricIndex) return;
+
+  currentLyricIndex = index;
+
+  const currentLine = syncedLyrics[index];
+  const nextLine = syncedLyrics[index + 1];
+
+  const lineDuration = nextLine ? nextLine.time - currentLine.time : 4;
+
+  renderKaraokeLine(currentLine.text);
+}
+
+function renderKaraokeLine(text) {
+  if (!lyricsLine) return;
+
+  lyricsLine.classList.remove("enter");
+  lyricsLine.classList.add("exit");
+
+  setTimeout(() => {
+    lyricsLine.textContent = text;
+    lyricsLine.classList.remove("exit");
+    lyricsLine.classList.add("enter");
+  }, 220);
+}
+
+function toggleLyrics() {
+  lyricsVisible = !lyricsVisible;
+
+  if (!lyricsBox || !mainLyricsBtn) return;
+
+  lyricsBox.classList.toggle("hidden", !lyricsVisible);
+  mainLyricsBtn.classList.toggle("active", lyricsVisible);
+
+  if (lyricsVisible && syncedLyrics.length === 0) {
+    loadLyrics();
   }
 }
 

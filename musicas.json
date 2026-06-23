@@ -1,17 +1,17 @@
 [
   {
-    "title": "I Will Not Break",
-    "artist": "KOTR",
+    "title": "10K",
+    "artist": "KB",
     "album": "Minhas Músicas",
-    "src": "assets/musicas/i_will-not-break.mp3",
-    "cover": "assets/capas/i_will_not_break.png"
+    "src": "assets/musicas/10k.mp3",
+    "cover": "assets/capas/10k.png"
   },
   {
-    "title": "Montagem God Of War",
-    "artist": "SrSider",
+    "title": "Chuvas de Deus",
+    "artist": "2metro",
     "album": "Minhas Músicas",
-    "src": "assets/musicas/montagem_god_of_war.mp3",
-    "cover": "assets/capas/montagem_god_of_war.png"
+    "src": "assets/musicas/chuvas_de_deus.mp3",
+    "cover": "assets/capas/chuvas_de_deus.png"
   },
   {
     "title": "King Jesus - pt2",

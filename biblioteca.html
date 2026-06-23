@@ -14,22 +14,22 @@
   <body>
     <aside class="sidebar" aria-label="Menu principal">
       <header class="sidebar-header">
-        <h1><i class="bi bi-soundwave" aria-hidden="true"></i> My Player</h1>
+        <h1><i class="bi bi-soundwave" aria-hidden="true"></i></h1>
       </header>
 
       <nav aria-label="Navegação do player">
-          <a href="index.html">
-            <i class="bi bi-house-door-fill" aria-hidden="true"></i>
-            <span>Home</span>
-          </a>
-          <a href="biblioteca.html" class="active">
-            <i class="bi bi-collection-fill" aria-hidden="true"></i>
-            <span>Biblioteca</span>
-          </a>
-          <a href="favoritas.html">
-            <i class="bi bi-heart-fill" aria-hidden="true"></i>
-            <span>Favoritas</span>
-          </a>
+        <a href="index.html">
+          <i class="bi bi-house-door-fill" aria-hidden="true"></i>
+          <span>Home</span>
+        </a>
+        <a href="biblioteca.html" class="active">
+          <i class="bi bi-collection-fill" aria-hidden="true"></i>
+          <span>Biblioteca</span>
+        </a>
+        <a href="favoritas.html">
+          <i class="bi bi-heart-fill" aria-hidden="true"></i>
+          <span>Favoritas</span>
+        </a>
       </nav>
     </aside>
 
@@ -51,7 +51,11 @@
           />
         </form>
 
-        <section id="libraryMusicList" class="library-music-list" aria-label="Lista de músicas"></section>
+        <section
+          id="libraryMusicList"
+          class="library-music-list"
+          aria-label="Lista de músicas"
+        ></section>
       </section>
 
       <aside class="library-preview" aria-label="Tocando agora">
@@ -68,23 +72,47 @@
         <p id="libraryPlayerArtist">KOTR</p>
 
         <div class="library-preview-progress">
-          <input id="libraryProgress" type="range" min="0" value="0" aria-label="Progresso da música" />
+          <input
+            id="libraryProgress"
+            type="range"
+            min="0"
+            value="0"
+            aria-label="Progresso da música"
+          />
           <div>
             <span id="libraryCurrentTime">0:00</span>
             <span id="libraryDuration">0:00</span>
           </div>
         </div>
 
-        <div class="library-preview-controls" aria-label="Controles da biblioteca">
-          <button id="libraryPrevBtn" class="player-control" type="button" aria-label="Música anterior">
+        <div
+          class="library-preview-controls"
+          aria-label="Controles da biblioteca"
+        >
+          <button
+            id="libraryPrevBtn"
+            class="player-control"
+            type="button"
+            aria-label="Música anterior"
+          >
             <i class="bi bi-skip-start-fill"></i>
           </button>
 
-          <button id="libraryPlayBtn" class="library-play player-control" type="button" aria-label="Tocar ou pausar">
+          <button
+            id="libraryPlayBtn"
+            class="library-play player-control"
+            type="button"
+            aria-label="Tocar ou pausar"
+          >
             <i id="libraryPlayIcon" class="bi bi-play-fill"></i>
           </button>
 
-          <button id="libraryNextBtn" class="player-control" type="button" aria-label="Próxima música">
+          <button
+            id="libraryNextBtn"
+            class="player-control"
+            type="button"
+            aria-label="Próxima música"
+          >
             <i class="bi bi-skip-end-fill"></i>
           </button>
         </div>
@@ -107,36 +135,84 @@
 
       <section class="global-controls" aria-label="Controles do player">
         <div class="global-buttons">
-          <button id="globalShuffleBtn" class="player-control" type="button" aria-label="Aleatório">
+          <button
+            id="globalShuffleBtn"
+            class="player-control"
+            type="button"
+            aria-label="Aleatório"
+          >
             <i class="bi bi-shuffle"></i>
           </button>
 
-          <button id="globalPrevBtn" class="player-control" type="button" aria-label="Música anterior">
+          <button
+            id="globalPrevBtn"
+            class="player-control"
+            type="button"
+            aria-label="Música anterior"
+          >
             <i class="bi bi-skip-start-fill"></i>
           </button>
 
-          <button id="globalPlayBtn" class="global-play player-control" type="button" aria-label="Tocar ou pausar">
+          <button
+            id="globalPlayBtn"
+            class="global-play player-control"
+            type="button"
+            aria-label="Tocar ou pausar"
+          >
             <i id="globalPlayIcon" class="bi bi-play-fill"></i>
           </button>
 
-          <button id="globalNextBtn" class="player-control" type="button" aria-label="Próxima música">
+          <button
+            id="globalNextBtn"
+            class="player-control"
+            type="button"
+            aria-label="Próxima música"
+          >
             <i class="bi bi-skip-end-fill"></i>
           </button>
 
-          <button id="globalRepeatBtn" class="player-control" type="button" aria-label="Repetir">
+          <button
+            id="globalRepeatBtn"
+            class="player-control"
+            type="button"
+            aria-label="Repetir"
+          >
             <i class="bi bi-repeat"></i>
           </button>
 
-          <button id="globalFavoriteBtn" class="player-control favorite-control" type="button" aria-label="Favoritar música">
+          <button
+            id="globalFavoriteBtn"
+            class="player-control favorite-control"
+            type="button"
+            aria-label="Favoritar música"
+          >
             <i class="bi bi-heart"></i>
           </button>
         </div>
 
         <div class="global-progress">
           <span id="globalCurrentTime">0:00</span>
-          <input id="globalProgress" type="range" min="0" value="0" aria-label="Progresso da música" />
+          <input
+            id="globalProgress"
+            type="range"
+            min="0"
+            value="0"
+            aria-label="Progresso da música"
+          />
           <span id="globalDuration">0:00</span>
         </div>
+      </section>
+      <section class="global-volume" aria-label="Controle de volume">
+        <i class="bi bi-volume-up-fill"></i>
+
+        <input
+          id="volumeControl"
+          type="range"
+          min="0"
+          max="100"
+          value="100"
+          aria-label="Volume"
+        />
       </section>
 
       <audio id="globalAudio"></audio>
