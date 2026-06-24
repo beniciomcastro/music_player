@@ -1049,9 +1049,7 @@ input[type="range"]::-moz-range-thumb {
   }
 
   .next-music-preview {
-    left: 50%;
-    bottom: 128px;
-    width: min(340px, calc(100vw - 32px));
+    display: none;
   }
 
   .next-music-preview img {
