@@ -6,6 +6,12 @@ let repeat = localStorage.getItem("playerRepeat") === "true";
 let favoriteSrcs = JSON.parse(localStorage.getItem("favoriteMusics") || "[]");
 
 let shouldRestoreTime = true;
+let nextShuffleIndex = null;
+
+let lyricsVisible = false;
+let syncedLyrics = [];
+let currentLyricIndex = -1;
+const lyricsCache = {};
 
 const mainTitle = document.getElementById("mainTitle");
 const mainArtist = document.getElementById("mainArtist");
@@ -17,10 +23,6 @@ const mainDuration = document.getElementById("mainDuration");
 const lyricsBox = document.getElementById("lyricsBox");
 const lyricsLine = document.getElementById("lyricsLine");
 const mainLyricsBtn = document.getElementById("mainLyricsBtn");
-
-let lyricsVisible = false;
-let syncedLyrics = [];
-let currentLyricIndex = -1;
 
 const mainPlayBtn = document.getElementById("mainPlayBtn");
 const mainPrevBtn = document.getElementById("mainPrevBtn");
@@ -60,6 +62,14 @@ const globalShuffleBtn = document.getElementById("globalShuffleBtn");
 const globalRepeatBtn = document.getElementById("globalRepeatBtn");
 const globalFavoriteBtn = document.getElementById("globalFavoriteBtn");
 
+const nextMusicTitle = document.getElementById("nextMusicTitle");
+const nextMusicArtist = document.getElementById("nextMusicArtist");
+const nextMusicCover = document.getElementById("nextMusicCover");
+
+/* =========================
+   CARREGAMENTO
+========================= */
+
 async function loadMusicsFromJson() {
   const response = await fetch("musicas.json");
   if (!response.ok) throw new Error("Não foi possível carregar musicas.json");
@@ -74,6 +84,36 @@ async function loadMusicsFromJson() {
     currentIndex = 0;
   }
 }
+
+async function initApp() {
+  try {
+    await loadMusicsFromJson();
+
+    initGlobalPlayer();
+    initControls();
+    renderLibrarySongs();
+    renderFavorites();
+    updateVisuals();
+    updatePlayIcons();
+
+    preloadAllLyrics();
+    loadLyrics(currentIndex);
+  } catch (error) {
+    console.error(error);
+
+    if (libraryMusicList) {
+      libraryMusicList.innerHTML = `
+        <div class="library-empty">
+          Erro ao carregar suas músicas. Verifique o arquivo musicas.json.
+        </div>
+      `;
+    }
+  }
+}
+
+/* =========================
+   PLAYER GLOBAL
+========================= */
 
 function hasGlobalPlayer() {
   return (
@@ -90,25 +130,6 @@ function hasGlobalPlayer() {
 
 function getCurrentMusic() {
   return musics[currentIndex];
-}
-
-function isFavorite(music = getCurrentMusic()) {
-  if (!music) return false;
-  return favoriteSrcs.includes(music.src);
-}
-
-function saveFavorites() {
-  localStorage.setItem("favoriteMusics", JSON.stringify(favoriteSrcs));
-}
-
-function saveState() {
-  if (!hasGlobalPlayer()) return;
-
-  localStorage.setItem("playerIndex", currentIndex);
-  localStorage.setItem("playerTime", globalAudio.currentTime || 0);
-  localStorage.setItem("playerPlaying", isPlaying ? "true" : "false");
-  localStorage.setItem("playerShuffle", shuffle ? "true" : "false");
-  localStorage.setItem("playerRepeat", repeat ? "true" : "false");
 }
 
 function loadGlobalMusic(index = currentIndex, keepTime = false) {
@@ -134,10 +155,8 @@ function loadGlobalMusic(index = currentIndex, keepTime = false) {
     globalAudio.currentTime = 0;
     localStorage.setItem("playerTime", "0");
   }
-  if (lyricsVisible) {
-    loadLyrics();
-  }
 
+  loadLyrics(currentIndex);
   updateVisuals();
 }
 
@@ -182,13 +201,9 @@ function nextGlobalMusic() {
   if (musics.length === 0) return;
 
   if (shuffle) {
-    let randomIndex;
-
-    do {
-      randomIndex = Math.floor(Math.random() * musics.length);
-    } while (randomIndex === currentIndex && musics.length > 1);
-
-    playGlobalMusic(randomIndex);
+    const indexToPlay = getNextMusicIndex();
+    nextShuffleIndex = null;
+    playGlobalMusic(indexToPlay);
     return;
   }
 
@@ -197,97 +212,78 @@ function nextGlobalMusic() {
 
 function prevGlobalMusic() {
   if (musics.length === 0) return;
+
   playGlobalMusic((currentIndex - 1 + musics.length) % musics.length);
 }
 
-function toggleShuffle() {
-  shuffle = !shuffle;
-  updateActiveButtons();
-  saveState();
-}
+function initGlobalPlayer() {
+  if (!hasGlobalPlayer()) return;
 
-function toggleRepeat() {
-  repeat = !repeat;
+  const wasPlaying = localStorage.getItem("playerPlaying") === "true";
+  const savedVolume = localStorage.getItem("playerVolume");
 
-  if (globalAudio) {
-    globalAudio.loop = repeat;
-  }
+  if (savedVolume !== null) {
+    globalAudio.volume = savedVolume / 100;
 
-  updateActiveButtons();
-  saveState();
-}
-
-function toggleFavorite() {
-  const music = getCurrentMusic();
-  if (!music) return;
-
-  if (isFavorite(music)) {
-    favoriteSrcs = favoriteSrcs.filter((src) => src !== music.src);
+    if (volumeControl) {
+      volumeControl.value = savedVolume;
+    }
   } else {
-    favoriteSrcs.push(music.src);
+    globalAudio.volume = 0.5;
+
+    if (volumeControl) {
+      volumeControl.value = 50;
+    }
   }
 
-  saveFavorites();
-  updateFavoriteButtons();
-  renderFavorites();
-}
+  loadGlobalMusic(currentIndex, true);
 
-function updateVisuals() {
-  const music = getCurrentMusic();
-  if (!music) return;
+  globalAudio.addEventListener("loadedmetadata", () => {
+    if (shouldRestoreTime) {
+      const savedIndex = Number(localStorage.getItem("playerIndex"));
+      const savedTime = Number(localStorage.getItem("playerTime")) || 0;
 
-  if (mainTitle) mainTitle.textContent = music.title;
-  if (mainArtist) mainArtist.textContent = music.artist;
-  if (heroCover) heroCover.src = music.cover;
+      if (
+        savedIndex === currentIndex &&
+        savedTime > 0 &&
+        savedTime < globalAudio.duration
+      ) {
+        globalAudio.currentTime = savedTime;
+      }
 
-  if (libraryPlayerCover) libraryPlayerCover.src = music.cover;
-  if (libraryPlayerTitle) libraryPlayerTitle.textContent = music.title;
-  if (libraryPlayerArtist) libraryPlayerArtist.textContent = music.artist;
+      shouldRestoreTime = false;
+    } else {
+      globalAudio.currentTime = 0;
+      localStorage.setItem("playerTime", "0");
+    }
 
-  document.querySelectorAll(".library-song").forEach((song) => {
-    song.classList.toggle(
-      "active",
-      Number(song.dataset.index) === currentIndex,
-    );
+    syncProgress();
+
+    if (wasPlaying) {
+      playGlobalMusic(currentIndex);
+    }
   });
 
-  updateFavoriteButtons();
-  updateActiveButtons();
-  updatePlayIcons();
-  loadLyrics();
+  globalAudio.addEventListener("timeupdate", syncProgress);
+
+  globalAudio.addEventListener("ended", () => {
+    if (repeat) return;
+    nextGlobalMusic();
+  });
 }
 
-function updatePlayIcons() {
-  const icon = isPlaying ? "bi bi-pause-fill" : "bi bi-play-fill";
+/* =========================
+   ESTADO
+========================= */
 
-  if (globalPlayIcon) globalPlayIcon.className = icon;
-  if (mainPlayIcon) mainPlayIcon.className = icon;
-  if (libraryPlayIcon) libraryPlayIcon.className = icon;
-}
+function saveState() {
+  if (!hasGlobalPlayer()) return;
 
-function updateFavoriteButtons() {
-  const active = isFavorite();
-  const icon = active
-    ? '<i class="bi bi-heart-fill"></i>'
-    : '<i class="bi bi-heart"></i>';
-
-  if (mainFavoriteBtn) {
-    mainFavoriteBtn.innerHTML = icon;
-    mainFavoriteBtn.classList.toggle("active", active);
-  }
-
-  if (globalFavoriteBtn) {
-    globalFavoriteBtn.innerHTML = icon;
-    globalFavoriteBtn.classList.toggle("active", active);
-  }
-}
-
-function updateActiveButtons() {
-  if (mainShuffleBtn) mainShuffleBtn.classList.toggle("active", shuffle);
-  if (globalShuffleBtn) globalShuffleBtn.classList.toggle("active", shuffle);
-
-  if (mainRepeatBtn) mainRepeatBtn.classList.toggle("active", repeat);
-  if (globalRepeatBtn) globalRepeatBtn.classList.toggle("active", repeat);
+  localStorage.setItem("playerIndex", currentIndex);
+  localStorage.setItem("playerTime", globalAudio.currentTime || 0);
+  localStorage.setItem("playerPlaying", isPlaying ? "true" : "false");
+  localStorage.setItem("playerShuffle", shuffle ? "true" : "false");
+  localStorage.setItem("playerRepeat", repeat ? "true" : "false");
 }
 
 function resetProgress() {
@@ -325,9 +321,244 @@ function syncProgress() {
   });
 
   updateLyrics();
-
   saveState();
 }
+
+/* =========================
+   CONTROLES
+========================= */
+
+function initControls() {
+  if (mainPlayBtn) mainPlayBtn.addEventListener("click", toggleGlobalPlay);
+  if (mainPrevBtn) mainPrevBtn.addEventListener("click", prevGlobalMusic);
+  if (mainNextBtn) mainNextBtn.addEventListener("click", nextGlobalMusic);
+  if (mainShuffleBtn) mainShuffleBtn.addEventListener("click", toggleShuffle);
+  if (mainRepeatBtn) mainRepeatBtn.addEventListener("click", toggleRepeat);
+  if (mainFavoriteBtn)
+    mainFavoriteBtn.addEventListener("click", toggleFavorite);
+
+  if (libraryPlayBtn)
+    libraryPlayBtn.addEventListener("click", toggleGlobalPlay);
+  if (libraryPrevBtn) libraryPrevBtn.addEventListener("click", prevGlobalMusic);
+  if (libraryNextBtn) libraryNextBtn.addEventListener("click", nextGlobalMusic);
+
+  if (globalPlayBtn) globalPlayBtn.addEventListener("click", toggleGlobalPlay);
+  if (globalPrevBtn) globalPrevBtn.addEventListener("click", prevGlobalMusic);
+  if (globalNextBtn) globalNextBtn.addEventListener("click", nextGlobalMusic);
+  if (globalShuffleBtn)
+    globalShuffleBtn.addEventListener("click", toggleShuffle);
+  if (globalRepeatBtn) globalRepeatBtn.addEventListener("click", toggleRepeat);
+  if (globalFavoriteBtn)
+    globalFavoriteBtn.addEventListener("click", toggleFavorite);
+
+  if (mainLyricsBtn) {
+    mainLyricsBtn.addEventListener("click", toggleLyrics);
+  }
+
+  if (volumeControl) {
+    volumeControl.addEventListener("input", () => {
+      const volume = volumeControl.value;
+
+      globalAudio.volume = volume / 100;
+      localStorage.setItem("playerVolume", volume);
+    });
+  }
+
+  [mainProgress, libraryProgress, globalProgress].forEach((progress) => {
+    if (!progress) return;
+
+    progress.addEventListener("input", () => {
+      if (globalAudio) {
+        globalAudio.currentTime = progress.value;
+        updateLyrics(true);
+      }
+    });
+  });
+
+  if (librarySearch) {
+    librarySearch.addEventListener("input", () => {
+      const term = librarySearch.value.toLowerCase().trim();
+
+      const filtered = musics.filter((music) =>
+        `${music.title} ${music.artist} ${music.album}`
+          .toLowerCase()
+          .includes(term),
+      );
+
+      renderLibrarySongs(filtered);
+    });
+  }
+}
+
+/* =========================
+   VISUAL
+========================= */
+
+function updateVisuals() {
+  const music = getCurrentMusic();
+  if (!music) return;
+
+  if (mainTitle) mainTitle.textContent = music.title;
+  if (mainArtist) mainArtist.textContent = music.artist;
+  if (heroCover) heroCover.src = music.cover;
+
+  if (libraryPlayerCover) libraryPlayerCover.src = music.cover;
+  if (libraryPlayerTitle) libraryPlayerTitle.textContent = music.title;
+  if (libraryPlayerArtist) libraryPlayerArtist.textContent = music.artist;
+
+  document.querySelectorAll(".library-song").forEach((song) => {
+    const isCurrent = Number(song.dataset.index) === currentIndex;
+
+    song.classList.toggle("active", isCurrent);
+    song.classList.toggle("playing", isCurrent && isPlaying);
+  });
+
+  updateFavoriteButtons();
+  updateActiveButtons();
+  updatePlayIcons();
+  updateNextMusicPreview();
+}
+
+function updatePlayIcons() {
+  const icon = isPlaying ? "bi bi-pause-fill" : "bi bi-play-fill";
+
+  if (globalPlayIcon) globalPlayIcon.className = icon;
+  if (mainPlayIcon) mainPlayIcon.className = icon;
+  if (libraryPlayIcon) libraryPlayIcon.className = icon;
+
+  document.querySelectorAll(".library-song").forEach((song) => {
+    const isCurrent = Number(song.dataset.index) === currentIndex;
+
+    song.classList.toggle("playing", isCurrent && isPlaying);
+  });
+}
+
+function updateActiveButtons() {
+  if (mainShuffleBtn) mainShuffleBtn.classList.toggle("active", shuffle);
+  if (globalShuffleBtn) globalShuffleBtn.classList.toggle("active", shuffle);
+
+  if (mainRepeatBtn) mainRepeatBtn.classList.toggle("active", repeat);
+  if (globalRepeatBtn) globalRepeatBtn.classList.toggle("active", repeat);
+}
+
+/* =========================
+   FAVORITOS
+========================= */
+
+function isFavorite(music = getCurrentMusic()) {
+  if (!music) return false;
+  return favoriteSrcs.includes(music.src);
+}
+
+function saveFavorites() {
+  localStorage.setItem("favoriteMusics", JSON.stringify(favoriteSrcs));
+}
+
+function toggleFavorite() {
+  const music = getCurrentMusic();
+  if (!music) return;
+
+  if (isFavorite(music)) {
+    favoriteSrcs = favoriteSrcs.filter((src) => src !== music.src);
+  } else {
+    favoriteSrcs.push(music.src);
+  }
+
+  saveFavorites();
+  updateFavoriteButtons();
+  renderFavorites();
+}
+
+function updateFavoriteButtons() {
+  const active = isFavorite();
+  const icon = active
+    ? '<i class="bi bi-heart-fill"></i>'
+    : '<i class="bi bi-heart"></i>';
+
+  if (mainFavoriteBtn) {
+    mainFavoriteBtn.innerHTML = icon;
+    mainFavoriteBtn.classList.toggle("active", active);
+  }
+
+  if (globalFavoriteBtn) {
+    globalFavoriteBtn.innerHTML = icon;
+    globalFavoriteBtn.classList.toggle("active", active);
+  }
+}
+
+/* =========================
+   SHUFFLE / REPEAT / PRÓXIMA
+========================= */
+
+function toggleShuffle() {
+  shuffle = !shuffle;
+  nextShuffleIndex = null;
+  updateNextMusicPreview();
+  updateActiveButtons();
+  saveState();
+}
+
+function toggleRepeat() {
+  repeat = !repeat;
+
+  if (globalAudio) {
+    globalAudio.loop = repeat;
+  }
+
+  updateNextMusicPreview();
+  updateActiveButtons();
+  saveState();
+}
+
+function getNextMusicIndex() {
+  if (musics.length === 0) return null;
+
+  if (!shuffle) {
+    return (currentIndex + 1) % musics.length;
+  }
+
+  if (
+    nextShuffleIndex === null ||
+    nextShuffleIndex === currentIndex ||
+    nextShuffleIndex >= musics.length
+  ) {
+    do {
+      nextShuffleIndex = Math.floor(Math.random() * musics.length);
+    } while (nextShuffleIndex === currentIndex && musics.length > 1);
+  }
+
+  return nextShuffleIndex;
+}
+
+function updateNextMusicPreview() {
+  if (
+    !nextMusicTitle ||
+    !nextMusicArtist ||
+    !nextMusicCover ||
+    musics.length === 0
+  ) {
+    return;
+  }
+
+  let nextMusic;
+
+  if (repeat) {
+    nextMusic = getCurrentMusic();
+  } else {
+    const nextIndex = getNextMusicIndex();
+    if (nextIndex === null) return;
+
+    nextMusic = musics[nextIndex];
+  }
+
+  nextMusicCover.src = nextMusic.cover;
+  nextMusicTitle.textContent = nextMusic.title;
+  nextMusicArtist.textContent = nextMusic.artist;
+}
+
+/* =========================
+   BIBLIOTECA
+========================= */
 
 function renderLibrarySongs(list = musics) {
   if (!libraryMusicList) return;
@@ -358,8 +589,14 @@ function renderLibrarySongs(list = musics) {
         <p>${music.artist}</p>
       </div>
 
-      <button type="button">
+      <button class="library-status" type="button" aria-label="Música tocando">
         <i class="bi bi-play-fill"></i>
+
+        <span class="sound-bars" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
       </button>
     `;
 
@@ -414,215 +651,69 @@ function renderFavorites() {
   });
 }
 
-function initControls() {
-  if (mainPlayBtn) mainPlayBtn.addEventListener("click", toggleGlobalPlay);
-  if (mainPrevBtn) mainPrevBtn.addEventListener("click", prevGlobalMusic);
-  if (mainNextBtn) mainNextBtn.addEventListener("click", nextGlobalMusic);
-  if (mainShuffleBtn) mainShuffleBtn.addEventListener("click", toggleShuffle);
-  if (mainRepeatBtn) mainRepeatBtn.addEventListener("click", toggleRepeat);
-  if (mainFavoriteBtn)
-    mainFavoriteBtn.addEventListener("click", toggleFavorite);
+/* =========================
+   LETRA LOCAL
+========================= */
 
-  if (volumeControl) {
-    volumeControl.addEventListener("input", () => {
-      globalAudio.volume = volumeControl.value / 100;
-    });
-  }
-  if (libraryPlayBtn)
-    libraryPlayBtn.addEventListener("click", toggleGlobalPlay);
-  if (libraryPrevBtn) libraryPrevBtn.addEventListener("click", prevGlobalMusic);
-  if (libraryNextBtn) libraryNextBtn.addEventListener("click", nextGlobalMusic);
-
-  if (globalPlayBtn) globalPlayBtn.addEventListener("click", toggleGlobalPlay);
-  if (globalPrevBtn) globalPrevBtn.addEventListener("click", prevGlobalMusic);
-  if (globalNextBtn) globalNextBtn.addEventListener("click", nextGlobalMusic);
-  if (globalShuffleBtn)
-    globalShuffleBtn.addEventListener("click", toggleShuffle);
-  if (globalRepeatBtn) globalRepeatBtn.addEventListener("click", toggleRepeat);
-  if (globalFavoriteBtn)
-    globalFavoriteBtn.addEventListener("click", toggleFavorite);
-  if (mainLyricsBtn) {
-    mainLyricsBtn.addEventListener("click", toggleLyrics);
-  }
-
-  [mainProgress, libraryProgress, globalProgress].forEach((progress) => {
-    if (!progress) return;
-
-    progress.addEventListener("input", () => {
-      if (globalAudio) {
-        globalAudio.currentTime = progress.value;
-      }
-    });
-  });
-
-  if (librarySearch) {
-    librarySearch.addEventListener("input", () => {
-      const term = librarySearch.value.toLowerCase().trim();
-
-      const filtered = musics.filter((music) =>
-        `${music.title} ${music.artist} ${music.album}`
-          .toLowerCase()
-          .includes(term),
-      );
-
-      renderLibrarySongs(filtered);
-    });
-  }
-}
-
-function initGlobalPlayer() {
-  if (!hasGlobalPlayer()) return;
-
-  const wasPlaying = localStorage.getItem("playerPlaying") === "true";
-
-  loadGlobalMusic(currentIndex, true);
-
-  globalAudio.addEventListener("loadedmetadata", () => {
-    if (shouldRestoreTime) {
-      const savedIndex = Number(localStorage.getItem("playerIndex"));
-      const savedTime = Number(localStorage.getItem("playerTime")) || 0;
-
-      if (
-        savedIndex === currentIndex &&
-        savedTime > 0 &&
-        savedTime < globalAudio.duration
-      ) {
-        globalAudio.currentTime = savedTime;
-      }
-
-      shouldRestoreTime = false;
-    } else {
-      globalAudio.currentTime = 0;
-      localStorage.setItem("playerTime", "0");
-    }
-
-    syncProgress();
-
-    if (wasPlaying) {
-      playGlobalMusic(currentIndex);
-    }
-  });
-
-  globalAudio.addEventListener("timeupdate", syncProgress);
-
-  globalAudio.addEventListener("ended", () => {
-    if (repeat) return;
-    nextGlobalMusic();
+function preloadAllLyrics() {
+  musics.forEach((music, index) => {
+    loadLyrics(index);
   });
 }
 
-function formatTime(time) {
-  if (!time || Number.isNaN(time)) return "0:00";
-
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60)
-    .toString()
-    .padStart(2, "0");
-
-  return `${minutes}:${seconds}`;
+function getLyricsPath(music) {
+  return music.lyrics || music.lrc || music.lyric || "";
 }
 
-async function initApp() {
-  try {
-    await loadMusicsFromJson();
-    initGlobalPlayer();
-    initControls();
-    renderLibrarySongs();
-    renderFavorites();
-    updateVisuals();
-    updatePlayIcons();
-  } catch (error) {
-    console.error(error);
-
-    if (libraryMusicList) {
-      libraryMusicList.innerHTML = `
-        <div class="library-empty">
-          Erro ao carregar suas músicas. Verifique o arquivo musicas.json.
-        </div>
-      `;
-    }
-  }
-}
-
-async function loadLyrics() {
-  if (!lyricsText) return;
-
-  const music = getCurrentMusic();
-  if (!music) return;
-
-  lyricsText.textContent = "Buscando letra...";
-
-  try {
-    const artist = encodeURIComponent(music.artist);
-    const title = encodeURIComponent(music.title);
-
-    const response = await fetch(
-      `https://lrclib.net/api/search?artist_name=${artist}&track_name=${title}`,
-    );
-
-    if (!response.ok) {
-      throw new Error("Erro ao buscar letra");
-    }
-
-    const results = await response.json();
-
-    if (!results || results.length === 0) {
-      throw new Error("Letra não encontrada");
-    }
-
-    const bestMatch = results[0];
-
-    const lyrics =
-      bestMatch.plainLyrics ||
-      bestMatch.syncedLyrics ||
-      "Letra não disponível para esta música.";
-
-    lyricsText.textContent = cleanSyncedLyrics(lyrics);
-  } catch (error) {
-    lyricsText.textContent = "Letra não encontrada para esta música.";
-  }
-}
-
-function cleanSyncedLyrics(lyrics) {
-  return lyrics.replace(/\[\d{2}:\d{2}\.\d{2,3}\]/g, "").trim();
-}
-
-async function loadLyrics() {
-  syncedLyrics = [];
-  currentLyricIndex = -1;
-
+async function loadLyrics(index = currentIndex) {
   if (!lyricsLine) return;
 
-  const music = getCurrentMusic();
+  const music = musics[index];
   if (!music) return;
 
-  lyricsLine.textContent = "Buscando letra...";
+  const lyricsPath = getLyricsPath(music);
 
-  try {
-    const artist = encodeURIComponent(music.artist);
-    const title = encodeURIComponent(music.title);
+  if (index === currentIndex) {
+    syncedLyrics = [];
+    currentLyricIndex = -1;
+    lyricsLine.textContent = "...";
+  }
 
-    const response = await fetch(
-      `https://lrclib.net/api/search?artist_name=${artist}&track_name=${title}`,
-    );
+  if (!lyricsPath) {
+    lyricsCache[music.src] = [];
+    return;
+  }
 
-    const results = await response.json();
-
-    if (!results || results.length === 0) {
-      throw new Error("Letra não encontrada");
+  if (lyricsCache[music.src]) {
+    if (index === currentIndex) {
+      syncedLyrics = lyricsCache[music.src];
+      currentLyricIndex = -1;
+      updateLyrics(true);
     }
 
-    const bestMatch = results.find((item) => item.syncedLyrics) || results[0];
+    return;
+  }
 
-    if (!bestMatch.syncedLyrics) {
-      lyricsLine.textContent = "Letra sincronizada não disponível.";
+  try {
+    const response = await fetch(lyricsPath);
+
+    if (!response.ok) {
+      lyricsCache[music.src] = [];
       return;
     }
 
-    syncedLyrics = parseSyncedLyrics(bestMatch.syncedLyrics);
-    lyricsLine.textContent = "...";
+    const lyricsText = await response.text();
+    const parsedLyrics = parseSyncedLyrics(lyricsText);
+
+    lyricsCache[music.src] = parsedLyrics;
+
+    if (index === currentIndex) {
+      syncedLyrics = parsedLyrics;
+      currentLyricIndex = -1;
+      updateLyrics(true);
+    }
   } catch (error) {
-    lyricsLine.textContent = "Letra não encontrada.";
+    lyricsCache[music.src] = [];
   }
 }
 
@@ -647,13 +738,15 @@ function parseSyncedLyrics(lyrics) {
     .filter((line) => line && line.text);
 }
 
-function updateLyrics() {
-  if (!lyricsVisible || syncedLyrics.length === 0 || !globalAudio) return;
+function updateLyrics(force = false) {
+  if (!lyricsVisible && !force) return;
+  if (syncedLyrics.length === 0 || !globalAudio) return;
 
   const currentTime = globalAudio.currentTime;
 
   const index = syncedLyrics.findIndex((line, i) => {
     const nextLine = syncedLyrics[i + 1];
+
     return (
       currentTime >= line.time && (!nextLine || currentTime < nextLine.time)
     );
@@ -663,12 +756,9 @@ function updateLyrics() {
 
   currentLyricIndex = index;
 
-  const currentLine = syncedLyrics[index];
-  const nextLine = syncedLyrics[index + 1];
-
-  const lineDuration = nextLine ? nextLine.time - currentLine.time : 4;
-
-  renderKaraokeLine(currentLine.text);
+  if (lyricsVisible) {
+    renderKaraokeLine(syncedLyrics[index].text);
+  }
 }
 
 function renderKaraokeLine(text) {
@@ -692,9 +782,35 @@ function toggleLyrics() {
   lyricsBox.classList.toggle("hidden", !lyricsVisible);
   mainLyricsBtn.classList.toggle("active", lyricsVisible);
 
-  if (lyricsVisible && syncedLyrics.length === 0) {
-    loadLyrics();
+  if (lyricsVisible) {
+    currentLyricIndex = -1;
+    lyricsLine.textContent = "...";
+
+    if (syncedLyrics.length > 0) {
+      updateLyrics(true);
+      return;
+    }
+
+    loadLyrics(currentIndex).then(() => {
+      currentLyricIndex = -1;
+      updateLyrics(true);
+    });
   }
+}
+
+/* =========================
+   UTIL
+========================= */
+
+function formatTime(time) {
+  if (!time || Number.isNaN(time)) return "0:00";
+
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60)
+    .toString()
+    .padStart(2, "0");
+
+  return `${minutes}:${seconds}`;
 }
 
 initApp();

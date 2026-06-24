@@ -4,69 +4,79 @@
     "artist": "KB",
     "album": "Minhas Músicas",
     "src": "assets/musicas/10k.mp3",
-    "cover": "assets/capas/10k.png"
+    "cover": "assets/capas/10k.png",
+    "lyrics": "assets/lyrics/10k.lrc"
   },
   {
     "title": "Chuvas de Deus",
     "artist": "2metro",
     "album": "Minhas Músicas",
     "src": "assets/musicas/chuvas_de_deus.mp3",
-    "cover": "assets/capas/chuvas_de_deus.png"
+    "cover": "assets/capas/chuvas_de_deus.png",
+    "lyrics": "assets/lyrics/chuvas_de_deus.lrc"
   },
   {
-    "title": "King Jesus - pt2",
-    "artist": "KB",
+    "title": "Love Theory",
+    "artist": "Kirk Franklin",
     "album": "Minhas Músicas",
-    "src": "assets/musicas/king_jesus_pt2.mp3",
-    "cover": "assets/capas/king_jesus_pt2.png"
+    "src": "assets/musicas/love_theory.mp3",
+    "cover": "assets/capas/love_theory.png",
+    "lyrics": "assets/lyrics/love_theory.lrc"
   },
   {
-    "title": "I See Who You Are",
-    "artist": "Farhan Van Adel",
+    "title": "Brighter Day",
+    "artist": "Kirk Franklin",
     "album": "Minhas Músicas",
-    "src": "assets/musicas/i_see_who_you_are.mp3",
-    "cover": "assets/capas/i_see_who_you_are.png"
+    "src": "assets/musicas/brighter_day.mp3",
+    "cover": "assets/capas/brighter_day.png",
+    "lyrics": "assets/lyrics/brighter_day.lrc"
   },
   {
-    "title": "Royalty",
-    "artist": "Egzod",
+    "title": "Êxodo",
+    "artist": "Projeto Sola",
     "album": "Minhas Músicas",
-    "src": "assets/musicas/royalty.mp3",
-    "cover": "assets/capas/royalty.png"
+    "src": "assets/musicas/exodo.mp3",
+    "cover": "assets/capas/exodo.png",
+    "lyrics": "assets/lyrics/exodo.lrc"
   },
   {
     "title": "Efésios 6",
     "artist": "2metro",
     "album": "Minhas Músicas",
     "src": "assets/musicas/efesios6.mp3",
-    "cover": "assets/capas/efesios6.png"
+    "cover": "assets/capas/efesios6.png",
+    "lyrics": "assets/lyrics/efesios6.lrc"
   },
   {
-    "title": "Pacific Rim",
-    "artist": "WaterTowerMusic",
+    "title": "Ooh Ahh",
+    "artist": "Grits",
     "album": "Minhas Músicas",
-    "src": "assets/musicas/pacific_rim.mp3",
-    "cover": "assets/capas/pacific_rim.png"
+    "src": "assets/musicas/ooh ahh.mp3",
+    "cover": "assets/capas/ooh ahh.png",
+    "lyrics": "assets/lyrics/ooh ahh.lrc"
   },
   {
     "title": "Paracetamol",
     "artist": "Lookas",
     "album": "Minhas Músicas",
     "src": "assets/musicas/paracetamol.mp3",
-    "cover": "assets/capas/paracetamol.png"
+    "cover": "assets/capas/paracetamol.png",
+    "lyrics": "assets/lyrics/paracetamol.lrc"
   },
   {
-    "title": "Battle Anthem",
+    "title": "Inheritance",
     "artist": "KOTR",
     "album": "Minhas Músicas",
     "src": "assets/musicas/battle_anthem.mp3",
-    "cover": "assets/capas/battle_anthem.png"
+    "cover": "assets/capas/battle_anthem.png",
+    "lyrics": "assets/lyrics/inheritance.lrc"
   },
   {
-    "title": "Metamorphosis",
-    "artist": "INTERWORLD",
+    "title": "Arde Outra Vez",
+    "artist": "Thalles Roberto",
     "album": "Minhas Músicas",
-    "src": "assets/musicas/metamorphosis.mp3",
-    "cover": "assets/capas/metamorphosis.png"
+    "src": "assets/musicas/arde_outra_vez.mp3",
+    "cover": "assets/capas/arde_outra_vez.png",
+    "lyrics": "assets/lyrics/arde_outra_vez.lrc"
   }
 ]
