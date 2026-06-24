@@ -78,5 +78,13 @@
     "src": "assets/musicas/arde_outra_vez.mp3",
     "cover": "assets/capas/arde_outra_vez.png",
     "lyrics": "assets/lyrics/arde_outra_vez.lrc"
+  },
+  {
+    "title": "Up!",
+    "artist": "Forrest Frank & Connor Price",
+    "album": "Minhas Músicas",
+    "src": "assets/musicas/up!.mp3",
+    "cover": "assets/capas/up!.png",
+    "lyrics": "assets/lyrics/up!.lrc"
   }
 ]

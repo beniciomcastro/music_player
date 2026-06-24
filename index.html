@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <title>My Player</title>
     <link rel="icon" type="image/png" href="assets/icon.png" />
     <link rel="stylesheet" href="style.css" />
     <link
@@ -11,6 +11,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
     />
   </head>
+
   <body>
     <aside class="sidebar" aria-label="Menu principal">
       <header class="sidebar-header">
@@ -18,22 +19,29 @@
       </header>
 
       <nav aria-label="Navegação do player">
-        <a href="index.html" class="active">
+        <a href="#home" class="active" data-page="homePage">
           <i class="bi bi-house-door-fill" aria-hidden="true"></i>
           <span>Home</span>
         </a>
-        <a href="biblioteca.html">
+
+        <a href="#biblioteca" data-page="libraryPage">
           <i class="bi bi-collection-fill" aria-hidden="true"></i>
           <span>Biblioteca</span>
         </a>
-        <a href="favoritas.html">
+
+        <a href="#favoritas" data-page="favoritesPage">
           <i class="bi bi-heart-fill" aria-hidden="true"></i>
           <span>Favoritas</span>
+        </a>
+
+        <a href="#adicionar" data-page="addMusicPage">
+          <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
+          <span>Adicionar</span>
         </a>
       </nav>
     </aside>
 
-    <main class="main">
+    <main id="homePage" class="main page active-page">
       <section class="hero" aria-label="Player principal">
         <p class="eyebrow">Minhas Músicas</p>
 
@@ -49,6 +57,7 @@
             <h2 id="mainTitle">I Will Not Break</h2>
             <p id="mainArtist">KOTR</p>
           </div>
+
           <div class="music-actions">
             <button
               id="mainLyricsBtn"
@@ -89,21 +98,11 @@
         </section>
 
         <div class="player-controls-main" aria-label="Controles da música">
-          <button
-            id="mainShuffleBtn"
-            class="player-control"
-            type="button"
-            aria-label="Aleatório"
-          >
+          <button id="mainShuffleBtn" class="player-control" type="button">
             <i class="bi bi-shuffle"></i>
           </button>
 
-          <button
-            id="mainPrevBtn"
-            class="player-control"
-            type="button"
-            aria-label="Música anterior"
-          >
+          <button id="mainPrevBtn" class="player-control" type="button">
             <i class="bi bi-skip-start-fill"></i>
           </button>
 
@@ -111,29 +110,150 @@
             id="mainPlayBtn"
             class="play-main player-control"
             type="button"
-            aria-label="Tocar ou pausar"
           >
             <i id="mainPlayIcon" class="bi bi-play-fill"></i>
           </button>
 
-          <button
-            id="mainNextBtn"
-            class="player-control"
-            type="button"
-            aria-label="Próxima música"
-          >
+          <button id="mainNextBtn" class="player-control" type="button">
             <i class="bi bi-skip-end-fill"></i>
           </button>
 
-          <button
-            id="mainRepeatBtn"
-            class="player-control"
-            type="button"
-            aria-label="Repetir"
-          >
+          <button id="mainRepeatBtn" class="player-control" type="button">
             <i class="bi bi-repeat"></i>
           </button>
         </div>
+      </section>
+    </main>
+
+    <main id="libraryPage" class="main library-main page" hidden>
+      <section class="library" aria-label="Biblioteca de músicas">
+        <header class="library-header">
+          <p class="eyebrow">Sua biblioteca</p>
+          <h2>Músicas</h2>
+          <p>Todas as suas músicas em um só lugar.</p>
+        </header>
+
+        <form class="library-search" role="search">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input
+            id="librarySearch"
+            type="search"
+            placeholder="Buscar música ou artista"
+            aria-label="Buscar música ou artista"
+          />
+        </form>
+
+        <section
+          id="libraryMusicList"
+          class="library-music-list"
+          aria-label="Lista de músicas"
+        ></section>
+      </section>
+
+      <aside class="library-preview" aria-label="Tocando agora">
+        <p class="eyebrow">Tocando agora</p>
+
+        <img
+          id="libraryPlayerCover"
+          class="library-preview-cover"
+          src="assets/capas/i_will_not_break.png"
+          alt="Capa da música atual"
+        />
+
+        <h2 id="libraryPlayerTitle">I Will Not Break</h2>
+        <p id="libraryPlayerArtist">KOTR</p>
+
+        <div class="library-preview-progress">
+          <input id="libraryProgress" type="range" min="0" value="0" />
+          <div>
+            <span id="libraryCurrentTime">0:00</span>
+            <span id="libraryDuration">0:00</span>
+          </div>
+        </div>
+
+        <div class="library-preview-controls">
+          <button id="libraryPrevBtn" class="player-control" type="button">
+            <i class="bi bi-skip-start-fill"></i>
+          </button>
+
+          <button
+            id="libraryPlayBtn"
+            class="library-play player-control"
+            type="button"
+          >
+            <i id="libraryPlayIcon" class="bi bi-play-fill"></i>
+          </button>
+
+          <button id="libraryNextBtn" class="player-control" type="button">
+            <i class="bi bi-skip-end-fill"></i>
+          </button>
+        </div>
+      </aside>
+    </main>
+
+    <main id="favoritesPage" class="main favorites-main page" hidden>
+      <section class="favorites" aria-label="Músicas favoritas">
+        <header class="library-header">
+          <p class="eyebrow">Suas favoritas</p>
+          <h2>Favoritas</h2>
+          <p>Músicas marcadas para ouvir de novo.</p>
+        </header>
+
+        <section
+          id="favoritesGrid"
+          class="favorites-grid"
+          aria-label="Músicas favoritas"
+        ></section>
+      </section>
+    </main>
+
+    <main id="addMusicPage" class="main add-music-main page" hidden>
+      <section class="add-music">
+        <header class="library-header">
+          <p class="eyebrow">Nova música</p>
+          <h2>Adicionar</h2>
+          <p>Salve músicas localmente neste navegador.</p>
+        </header>
+
+        <form id="addMusicForm" class="add-music-form">
+          <label>
+            Nome da música
+            <input id="newMusicTitle" type="text" required />
+          </label>
+
+          <label>
+            Artista
+            <input id="newMusicArtist" type="text" required />
+          </label>
+
+          <label>
+            Álbum
+            <input id="newMusicAlbum" type="text" />
+          </label>
+
+          <label>
+            Arquivo MP3
+            <input id="newMusicAudio" type="file" accept="audio/*" required />
+          </label>
+
+          <label>
+            Capa
+            <input id="newMusicCover" type="file" accept="image/*" required />
+          </label>
+
+          <label>
+            Letra sincronizada .LRC
+            <textarea
+              id="newMusicLyrics"
+              rows="8"
+              placeholder="[00:03.10]Primeira linha da música&#10;[00:07.50]Segunda linha da música"
+            ></textarea>
+          </label>
+
+          <button type="submit">Adicionar música</button>
+
+          <p id="addMusicMessage" class="add-music-message"></p>
+        </form>
       </section>
     </main>
 
@@ -155,6 +275,7 @@
           src="assets/capas/i_will_not_break.png"
           alt="Capa da música atual"
         />
+
         <div class="global-current-info">
           <h2 id="globalTitle">I Will Not Break</h2>
           <p id="globalArtist">KOTR</p>
@@ -163,21 +284,11 @@
 
       <section class="global-controls" aria-label="Controles do player">
         <div class="global-buttons">
-          <button
-            id="globalShuffleBtn"
-            class="player-control"
-            type="button"
-            aria-label="Aleatório"
-          >
+          <button id="globalShuffleBtn" class="player-control" type="button">
             <i class="bi bi-shuffle"></i>
           </button>
 
-          <button
-            id="globalPrevBtn"
-            class="player-control"
-            type="button"
-            aria-label="Música anterior"
-          >
+          <button id="globalPrevBtn" class="player-control" type="button">
             <i class="bi bi-skip-start-fill"></i>
           </button>
 
@@ -185,26 +296,15 @@
             id="globalPlayBtn"
             class="global-play player-control"
             type="button"
-            aria-label="Tocar ou pausar"
           >
             <i id="globalPlayIcon" class="bi bi-play-fill"></i>
           </button>
 
-          <button
-            id="globalNextBtn"
-            class="player-control"
-            type="button"
-            aria-label="Próxima música"
-          >
+          <button id="globalNextBtn" class="player-control" type="button">
             <i class="bi bi-skip-end-fill"></i>
           </button>
 
-          <button
-            id="globalRepeatBtn"
-            class="player-control"
-            type="button"
-            aria-label="Repetir"
-          >
+          <button id="globalRepeatBtn" class="player-control" type="button">
             <i class="bi bi-repeat"></i>
           </button>
 
@@ -212,7 +312,6 @@
             id="globalFavoriteBtn"
             class="player-control favorite-control"
             type="button"
-            aria-label="Favoritar música"
           >
             <i class="bi bi-heart"></i>
           </button>
@@ -220,27 +319,14 @@
 
         <div class="global-progress">
           <span id="globalCurrentTime">0:00</span>
-          <input
-            id="globalProgress"
-            type="range"
-            min="0"
-            value="0"
-            aria-label="Progresso da música"
-          />
+          <input id="globalProgress" type="range" min="0" value="0" />
           <span id="globalDuration">0:00</span>
         </div>
       </section>
+
       <section class="global-volume" aria-label="Controle de volume">
         <i class="bi bi-volume-up-fill"></i>
-
-        <input
-          id="volumeControl"
-          type="range"
-          min="0"
-          max="100"
-          value="100"
-          aria-label="Volume"
-        />
+        <input id="volumeControl" type="range" min="0" max="100" value="100" />
       </section>
 
       <audio id="globalAudio"></audio>

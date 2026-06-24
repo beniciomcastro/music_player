@@ -66,18 +66,33 @@ const nextMusicTitle = document.getElementById("nextMusicTitle");
 const nextMusicArtist = document.getElementById("nextMusicArtist");
 const nextMusicCover = document.getElementById("nextMusicCover");
 
+const addMusicForm = document.getElementById("addMusicForm");
+const newMusicTitle = document.getElementById("newMusicTitle");
+const newMusicArtist = document.getElementById("newMusicArtist");
+const newMusicAlbum = document.getElementById("newMusicAlbum");
+const newMusicAudio = document.getElementById("newMusicAudio");
+const newMusicCover = document.getElementById("newMusicCover");
+const newMusicLyrics = document.getElementById("newMusicLyrics");
+const addMusicMessage = document.getElementById("addMusicMessage");
+
 /* =========================
    CARREGAMENTO
 ========================= */
 
 async function loadMusicsFromJson() {
   const response = await fetch("musicas.json");
-  if (!response.ok) throw new Error("Não foi possível carregar musicas.json");
 
-  musics = await response.json();
+  if (!response.ok) {
+    throw new Error("Não foi possível carregar musicas.json");
+  }
+
+  const jsonMusics = await response.json();
+  const localMusics = await loadLocalMusics();
+
+  musics = [...jsonMusics, ...localMusics];
 
   if (!Array.isArray(musics) || musics.length === 0) {
-    throw new Error("O arquivo musicas.json está vazio ou inválido");
+    throw new Error("Nenhuma música encontrada");
   }
 
   if (currentIndex < 0 || currentIndex >= musics.length) {
@@ -89,6 +104,7 @@ async function initApp() {
   try {
     await loadMusicsFromJson();
 
+    initPageNavigation();
     initGlobalPlayer();
     initControls();
     renderLibrarySongs();
@@ -98,6 +114,10 @@ async function initApp() {
 
     preloadAllLyrics();
     loadLyrics(currentIndex);
+
+    document.querySelectorAll('input[type="range"]').forEach((range) => {
+      updateRangeProgress(range);
+    });
   } catch (error) {
     console.error(error);
 
@@ -109,6 +129,132 @@ async function initApp() {
       `;
     }
   }
+}
+
+/* =========================
+   INDEXEDDB
+========================= */
+
+function openMusicDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("myPlayerDB", 1);
+
+    request.onupgradeneeded = () => {
+      const db = request.result;
+
+      if (!db.objectStoreNames.contains("musics")) {
+        db.createObjectStore("musics", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function saveLocalMusic(music) {
+  const db = await openMusicDB();
+
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction("musics", "readwrite");
+    const store = transaction.objectStore("musics");
+
+    store.add(music);
+
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+async function loadLocalMusics() {
+  const db = await openMusicDB();
+
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction("musics", "readonly");
+    const store = transaction.objectStore("musics");
+    const request = store.getAll();
+
+    request.onsuccess = () => {
+      const savedMusics = request.result.map((music) => ({
+        title: music.title,
+        artist: music.artist,
+        album: music.album || "Local",
+        src: URL.createObjectURL(music.audioBlob),
+        cover: URL.createObjectURL(music.coverBlob),
+        lyricsText: music.lyricsText || "",
+        local: true,
+      }));
+
+      resolve(savedMusics);
+    };
+
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/* =========================
+   NAVEGAÇÃO INTERNA
+========================= */
+
+function initPageNavigation() {
+  const pageLinks = document.querySelectorAll("[data-page]");
+  const pages = document.querySelectorAll(".page");
+
+  if (pageLinks.length === 0 || pages.length === 0) return;
+
+  pageLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const pageId = link.dataset.page;
+
+      showPage(pageId);
+      history.pushState(null, "", link.getAttribute("href"));
+    });
+  });
+
+  window.addEventListener("popstate", () => {
+    const pageId = getPageFromHash();
+    showPage(pageId);
+  });
+
+  showPage(getPageFromHash());
+}
+
+function getPageFromHash() {
+  const hash = window.location.hash;
+
+  if (hash === "#biblioteca") return "libraryPage";
+  if (hash === "#favoritas") return "favoritesPage";
+  if (hash === "#adicionar") return "addMusicPage";
+
+  return "homePage";
+}
+
+function showPage(pageId) {
+  document.querySelectorAll(".page").forEach((page) => {
+    page.hidden = page.id !== pageId;
+    page.classList.toggle("active-page", page.id === pageId);
+  });
+
+  document.querySelectorAll("[data-page]").forEach((link) => {
+    link.classList.toggle("active", link.dataset.page === pageId);
+  });
+
+  if (pageId === "libraryPage") {
+    renderLibrarySongs();
+  }
+
+  if (pageId === "favoritesPage") {
+    renderFavorites();
+  }
+
+  document.querySelectorAll('input[type="range"]').forEach((range) => {
+    updateRangeProgress(range);
+  });
 }
 
 /* =========================
@@ -236,6 +382,10 @@ function initGlobalPlayer() {
     }
   }
 
+  if (volumeControl) {
+    updateRangeProgress(volumeControl);
+  }
+
   loadGlobalMusic(currentIndex, true);
 
   globalAudio.addEventListener("loadedmetadata", () => {
@@ -288,7 +438,10 @@ function saveState() {
 
 function resetProgress() {
   [globalProgress, mainProgress, libraryProgress].forEach((progress) => {
-    if (progress) progress.value = 0;
+    if (!progress) return;
+
+    progress.value = 0;
+    updateRangeProgress(progress);
   });
 
   [globalCurrentTime, mainCurrentTime, libraryCurrentTime].forEach((item) => {
@@ -308,8 +461,10 @@ function syncProgress() {
 
   [globalProgress, mainProgress, libraryProgress].forEach((progress) => {
     if (!progress) return;
+
     progress.max = duration;
     progress.value = current;
+    updateRangeProgress(progress);
   });
 
   [globalCurrentTime, mainCurrentTime, libraryCurrentTime].forEach((item) => {
@@ -361,6 +516,8 @@ function initControls() {
 
       globalAudio.volume = volume / 100;
       localStorage.setItem("playerVolume", volume);
+
+      updateRangeProgress(volumeControl);
     });
   }
 
@@ -370,6 +527,7 @@ function initControls() {
     progress.addEventListener("input", () => {
       if (globalAudio) {
         globalAudio.currentTime = progress.value;
+        updateRangeProgress(progress);
         updateLyrics(true);
       }
     });
@@ -388,11 +546,58 @@ function initControls() {
       renderLibrarySongs(filtered);
     });
   }
+
+  if (addMusicForm) {
+    addMusicForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const audioFile = newMusicAudio.files[0];
+      const coverFile = newMusicCover.files[0];
+      const lyricsText = newMusicLyrics.value.trim();
+
+      if (!audioFile || !coverFile) return;
+
+      await saveLocalMusic({
+        title: newMusicTitle.value.trim(),
+        artist: newMusicArtist.value.trim(),
+        album: newMusicAlbum.value.trim() || "Local",
+        audioBlob: audioFile,
+        coverBlob: coverFile,
+        lyricsText,
+      });
+
+      if (addMusicMessage) {
+        addMusicMessage.textContent = "Música adicionada com sucesso.";
+      }
+
+      addMusicForm.reset();
+
+      await loadMusicsFromJson();
+      renderLibrarySongs();
+      renderFavorites();
+      updateVisuals();
+    });
+  }
 }
 
 /* =========================
    VISUAL
 ========================= */
+
+function updateRangeProgress(range) {
+  const min = Number(range.min || 0);
+  const max = Number(range.max || 100);
+  const value = Number(range.value);
+
+  if (max <= min) {
+    range.style.setProperty("--progress", "0%");
+    return;
+  }
+
+  const percent = ((value - min) * 100) / (max - min);
+
+  range.style.setProperty("--progress", `${percent}%`);
+}
 
 function updateVisuals() {
   const music = getCurrentMusic();
@@ -413,6 +618,13 @@ function updateVisuals() {
     song.classList.toggle("playing", isCurrent && isPlaying);
   });
 
+  document.querySelectorAll(".favorite-card").forEach((card) => {
+    const isCurrent = Number(card.dataset.index) === currentIndex;
+
+    card.classList.toggle("active", isCurrent);
+    card.classList.toggle("playing", isCurrent && isPlaying);
+  });
+
   updateFavoriteButtons();
   updateActiveButtons();
   updatePlayIcons();
@@ -431,6 +643,12 @@ function updatePlayIcons() {
 
     song.classList.toggle("playing", isCurrent && isPlaying);
   });
+
+  document.querySelectorAll(".favorite-card").forEach((card) => {
+    const isCurrent = Number(card.dataset.index) === currentIndex;
+
+    card.classList.toggle("playing", isCurrent && isPlaying);
+  });
 }
 
 function updateActiveButtons() {
@@ -447,6 +665,7 @@ function updateActiveButtons() {
 
 function isFavorite(music = getCurrentMusic()) {
   if (!music) return false;
+
   return favoriteSrcs.includes(music.src);
 }
 
@@ -631,12 +850,19 @@ function renderFavorites() {
     const card = document.createElement("article");
 
     card.className = "favorite-card";
+    card.dataset.index = originalIndex;
 
     card.innerHTML = `
       <img src="${music.cover}" alt="${music.title}" />
 
       <button class="card-play" type="button">
         <i class="bi bi-play-fill"></i>
+
+        <span class="sound-bars" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
       </button>
 
       <h3>${music.title}</h3>
@@ -649,6 +875,8 @@ function renderFavorites() {
 
     favoritesGrid.appendChild(card);
   });
+
+  updateVisuals();
 }
 
 /* =========================
@@ -670,6 +898,19 @@ async function loadLyrics(index = currentIndex) {
 
   const music = musics[index];
   if (!music) return;
+
+  if (music.lyricsText) {
+    const parsedLyrics = parseSyncedLyrics(music.lyricsText);
+    lyricsCache[music.src] = parsedLyrics;
+
+    if (index === currentIndex) {
+      syncedLyrics = parsedLyrics;
+      currentLyricIndex = -1;
+      updateLyrics(true);
+    }
+
+    return;
+  }
 
   const lyricsPath = getLyricsPath(music);
 
