@@ -118,7 +118,6 @@ http://localhost:8080
 ├── index.html
 ├── style.css
 ├── script.js
-├── musicas.json
 ├── assets/
 │   ├── capas/
 │   ├── musicas/
@@ -130,7 +129,7 @@ http://localhost:8080
 
 ## Adding New Songs
 
-Edit `musicas.json` and add a new item following the existing format:
+Edit the start of `script.js` and add a new item following the existing format:
 
 ```json
 {
@@ -148,6 +147,10 @@ Then place:
 - The audio file inside `assets/musicas/`
 - The cover image inside `assets/capas/`
 - The lyrics file inside `assets/lyrics/`
+
+## Or use the "+" button in the website
+
+The music is saved in the browser, if you lose the history, you will lose the music
 
 ## Browser Storage
 
