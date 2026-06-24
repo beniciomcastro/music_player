@@ -34,6 +34,25 @@
           <span>Favoritas</span>
         </a>
 
+        <a href="#playlists" data-page="playlistsPage">
+          <i class="bi bi-music-note-list" aria-hidden="true"></i>
+          <span>Playlists</span>
+        </a>
+
+        <a href="#estatisticas" data-page="statsPage">
+          <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>
+          <span>Stats</span>
+        </a>
+
+        <button
+          id="themeToggleBtn"
+          class="theme-toggle"
+          type="button"
+          aria-label="Alternar tema"
+        >
+          <i class="bi bi-moon-stars-fill"></i>
+        </button>
+
         <a href="#adicionar" data-page="addMusicPage">
           <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
           <span>Adicionar</span>
@@ -207,6 +226,65 @@
       </section>
     </main>
 
+    <main id="playlistsPage" class="main playlists-main page" hidden>
+      <section class="playlists" aria-label="Playlists">
+        <header class="library-header">
+          <p class="eyebrow">Organização</p>
+          <h2>Playlists</h2>
+          <p>Playlists salvas neste navegador.</p>
+        </header>
+
+        <form id="playlistForm" class="playlist-form">
+          <input
+            id="playlistName"
+            type="text"
+            placeholder="Nome da nova playlist"
+            required
+          />
+          <button type="submit">Criar playlist</button>
+        </form>
+
+        <section class="smart-playlists">
+          <article class="playlist-block">
+            <h3>Mais Ouvidas</h3>
+            <div id="mostPlayedList" class="compact-song-list"></div>
+          </article>
+
+          <article class="playlist-block">
+            <h3>Tocadas Recentemente</h3>
+            <div id="recentPlayedList" class="compact-song-list"></div>
+          </article>
+
+          <article class="playlist-block">
+            <h3>Histórico de Reprodução</h3>
+            <div id="historyList" class="compact-song-list"></div>
+          </article>
+        </section>
+
+        <section
+          id="customPlaylistsGrid"
+          class="custom-playlists-grid"
+        ></section>
+      </section>
+    </main>
+
+    <main id="statsPage" class="main stats-main page" hidden>
+      <section class="stats" aria-label="Estatísticas">
+        <header class="library-header">
+          <p class="eyebrow">Seu uso</p>
+          <h2>Estatísticas</h2>
+          <p>Tudo salvo apenas no LocalStorage.</p>
+        </header>
+
+        <section id="statsCards" class="stats-cards"></section>
+
+        <article class="playlist-block">
+          <h3>Ranking Top 10</h3>
+          <div id="topRankingList" class="compact-song-list"></div>
+        </article>
+      </section>
+    </main>
+
     <main id="addMusicPage" class="main add-music-main page" hidden>
       <section class="add-music">
         <header class="library-header">
@@ -331,6 +409,38 @@
 
       <audio id="globalAudio"></audio>
     </footer>
+
+    <div id="playlistModal" class="playlist-modal" hidden>
+      <section
+        class="playlist-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="playlistModalTitle"
+      >
+        <button
+          id="playlistModalClose"
+          class="playlist-modal-close"
+          type="button"
+          aria-label="Fechar"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+
+        <p class="eyebrow">Escolha a playlist</p>
+        <h2 id="playlistModalTitle">Adicionar à playlist</h2>
+
+        <div id="playlistModalOptions" class="playlist-modal-options"></div>
+
+        <form id="playlistModalCreateForm" class="playlist-modal-create">
+          <input
+            id="playlistModalNewName"
+            type="text"
+            placeholder="Criar nova playlist"
+          />
+          <button type="submit">Criar e adicionar</button>
+        </form>
+      </section>
+    </div>
 
     <script src="script.js"></script>
   </body>
