@@ -1,0 +1,19 @@
+/* =========================
+   MOBILE / TABLET AJUSTES
+========================= */
+
+@media (max-width: 1099px) {
+  .global-volume {
+    display: none;
+  }
+
+  .next-music-preview {
+    display: none !important;
+  }
+
+  .next-music-preview img {
+    width: 56px;
+    height: 56px;
+  }
+}
+

@@ -1,0 +1,97 @@
+/* =========================
+   FAVORITAS
+========================= */
+
+.favorites-main {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 18px;
+}
+
+.favorite-card {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 16px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: 0.25s;
+  position: relative;
+}
+
+.favorite-card:hover {
+  background: rgba(30, 215, 96, 0.12);
+  border-color: rgba(30, 215, 96, 0.28);
+  transform: translateY(-5px);
+}
+
+.favorite-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 18px;
+  margin-bottom: 14px;
+}
+
+.favorite-card h3 {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.favorite-card p {
+  color: #b3b3b3;
+  font-size: 14px;
+}
+
+.favorite-card .card-play {
+  position: absolute;
+  right: 24px;
+  bottom: 78px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1ed760;
+  color: #000;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: 0.2s;
+}
+
+.favorite-card:hover .card-play,
+.favorite-card.playing .card-play {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.favorite-card.playing .card-play i {
+  display: none;
+}
+
+.favorite-card.playing .card-play .sound-bars {
+  display: flex;
+}
+
+.favorite-card.playing .card-play .sound-bars span {
+  background: #000;
+}
+
+.favorite-card .card-play .sound-bars {
+  display: none;
+}
+
+.favorite-card.active {
+  background: rgba(30, 215, 96, 0.12);
+  border-color: rgba(30, 215, 96, 0.28);
+}
+
+.favorite-card.active h3 {
+  color: #1ed760;
+}
+

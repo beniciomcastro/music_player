@@ -1,0 +1,21 @@
+/* =========================
+   PROGRESSO
+========================= */
+
+.progress-main {
+  order: 4;
+  width: 100%;
+}
+
+.progress-main input[type="range"] {
+  width: 100%;
+}
+
+.progress-main div {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  color: #c5d0d0;
+  font-size: 12px;
+}
+

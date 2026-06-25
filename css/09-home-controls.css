@@ -1,0 +1,42 @@
+/* =========================
+   CONTROLES HOME
+========================= */
+
+.player-controls-main {
+  order: 6;
+  width: 100%;
+  height: 68px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-controls-main button {
+  background: transparent;
+  color: white;
+  font-size: 24px;
+  transition: 0.2s;
+}
+
+.player-controls-main button:hover {
+  transform: scale(1.1);
+}
+
+.play-main {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #1ed760 !important;
+  color: #000 !important;
+  display: grid;
+  place-items: center;
+  font-size: 34px !important;
+}
+
+.player-control.active,
+.player-control.active i,
+.favorite-control.active,
+.favorite-control.active i {
+  color: #1ed760;
+}
+

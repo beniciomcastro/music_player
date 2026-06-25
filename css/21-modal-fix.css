@@ -1,0 +1,41 @@
+/* =========================
+   CORREÇÃO MODAL PLAYLIST GLOBAL
+========================= */
+.playlist-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 18px !important;
+  overflow-y: auto !important;
+}
+
+.playlist-modal[hidden] {
+  display: none !important;
+}
+
+.playlist-modal-card {
+  width: min(520px, calc(100vw - 36px)) !important;
+  max-height: calc(100svh - 36px) !important;
+  margin: auto !important;
+}
+
+.playlist-modal-options {
+  max-height: min(260px, 34svh) !important;
+}
+
+@media (max-width: 640px) {
+  .playlist-modal {
+    padding: 12px !important;
+  }
+
+  .playlist-modal-card {
+    width: min(100%, calc(100vw - 24px)) !important;
+    max-height: calc(100svh - 24px) !important;
+  }
+
+  .playlist-modal-options {
+    max-height: min(210px, 30svh) !important;
+  }
+}

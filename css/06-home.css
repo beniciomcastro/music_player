@@ -1,0 +1,81 @@
+/* =========================
+   HOME
+========================= */
+
+.hero {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hero > .eyebrow {
+  order: 1;
+  color: #1ed760;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.hero img {
+  order: 2;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: min(58svh, 520px);
+  object-fit: cover;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 38px 80px rgba(0, 0, 0, 0.42),
+    0 0 80px rgba(30, 215, 96, 0.14);
+}
+
+.music-info-main {
+  order: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.music-info-main h2 {
+  max-width: 100%;
+  font-size: clamp(34px, 10vw, 56px);
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: -2px;
+}
+
+.music-info-main p {
+  color: #c5d0d0;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.music-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.heart-main {
+  min-width: 50px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #c5d0d0;
+  font-size: 21px;
+  transition: 0.2s;
+}
+
+.heart-main:hover,
+.heart-main.active,
+#mainLyricsBtn.active {
+  color: #1ed760;
+  transform: scale(1.06);
+}
+

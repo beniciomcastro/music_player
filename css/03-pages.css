@@ -1,0 +1,21 @@
+/* =========================
+   SPA / PÁGINAS
+========================= */
+
+.page[hidden] {
+  display: none !important;
+}
+
+.page.active-page {
+  display: block;
+}
+
+.page.active-page.library-main {
+  display: grid;
+}
+
+.page.active-page.favorites-main,
+.page.active-page.add-music-main {
+  display: block;
+}
+

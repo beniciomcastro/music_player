@@ -1,0 +1,110 @@
+/* =========================
+   PLAYER GLOBAL
+========================= */
+
+.global-player {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 70;
+  min-height: 104px;
+  padding: 12px;
+  border-radius: 22px;
+  background: rgba(0, 0, 0, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.46);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.global-current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.global-current img {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.global-current h2 {
+  font-size: 13px;
+}
+
+.global-current p {
+  color: #b3b3b3;
+  font-size: 12px;
+}
+
+.global-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+}
+
+.global-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.global-buttons button {
+  background: transparent;
+  color: #fff;
+  font-size: 22px;
+  transition: 0.2s;
+}
+
+.global-buttons button:hover {
+  transform: scale(1.08);
+}
+
+.global-play {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #1ed760 !important;
+  color: #000 !important;
+  display: grid;
+  place-items: center;
+  font-size: 26px !important;
+}
+
+.global-progress {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #b3b3b3;
+  font-size: 12px;
+}
+
+.global-progress input {
+  width: 100%;
+}
+
+.global-volume {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.global-volume i {
+  font-size: 18px;
+  color: #b3b3b3;
+}
+
+.global-volume input {
+  width: 120px;
+}
+

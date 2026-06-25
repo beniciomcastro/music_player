@@ -1,0 +1,65 @@
+/* =========================
+   LETRA
+========================= */
+
+.lyrics-karaoke {
+  order: 5;
+  width: 100%;
+  height: 42px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(30, 215, 96, 0.18);
+  backdrop-filter: blur(16px);
+}
+
+.lyrics-karaoke.hidden {
+  display: none;
+}
+
+.lyrics-karaoke p {
+  width: 100%;
+  text-align: center;
+  color: #1ed760;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lyrics-karaoke p.enter {
+  animation: lyricEnter 0.28s ease forwards;
+}
+
+.lyrics-karaoke p.exit {
+  animation: lyricExit 0.22s ease forwards;
+}
+
+@keyframes lyricEnter {
+  from {
+    transform: translateY(26px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes lyricExit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(-26px);
+    opacity: 0;
+  }
+}
+

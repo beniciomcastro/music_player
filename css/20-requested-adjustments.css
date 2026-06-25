@@ -1,0 +1,130 @@
+/* =========================
+   AJUSTES SOLICITADOS - NÃO ALTERAR O RESTANTE
+========================= */
+
+/* Tema claro: botões/ícones que estavam brancos ficam escuros */
+body.light-theme .player-controls-main button,
+body.light-theme .library-preview-controls button,
+body.light-theme .global-buttons button,
+body.light-theme .playlist-modal-close,
+body.light-theme .playlist-title-row button,
+body.light-theme .playlist-track button,
+body.light-theme .small-action,
+body.light-theme .remove-favorite,
+body.light-theme .theme-toggle,
+body.light-theme .library-song button {
+  color: #18221d;
+}
+
+body.light-theme .play-main,
+body.light-theme .library-play,
+body.light-theme .global-play,
+body.light-theme .playlist-form button,
+body.light-theme .playlist-modal-create button,
+body.light-theme .add-music-form button {
+  color: #06100d !important;
+}
+
+body.light-theme .sidebar h1 {
+  color: #06100d;
+}
+
+body.light-theme .global-volume i,
+body.light-theme .library-status i,
+body.light-theme .global-progress,
+body.light-theme .progress-main div,
+body.light-theme .library-preview-progress div {
+  color: #44524a;
+}
+
+body.light-theme input[type="range"]::-webkit-slider-thumb {
+  background: #18221d;
+}
+
+body.light-theme input[type="range"]::-moz-range-thumb {
+  background: #18221d;
+}
+
+/* Modal de adicionar à playlist: sobe e nunca estoura a tela */
+.playlist-modal {
+  place-items: start center;
+  padding-top: clamp(14px, 5vh, 46px);
+  padding-bottom: 14px;
+  overflow-y: auto;
+}
+
+.playlist-modal-card {
+  max-height: calc(100svh - clamp(32px, 8vh, 74px));
+  align-content: start;
+  gap: 12px;
+}
+
+.playlist-modal-options {
+  max-height: min(220px, 32svh);
+}
+
+/* Cards/listas de playlists encolhem quando há poucas músicas, mas mantêm scroll quando passar do limite */
+.playlist-block,
+.playlist-block.custom-playlist {
+  min-height: auto;
+  height: auto;
+  max-height: 330px;
+}
+
+.playlist-block .compact-song-list {
+  flex: initial;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.playlist-block.custom-playlist .compact-song-list {
+  max-height: 270px;
+}
+
+@media (min-width: 768px) and (max-width: 1099px) {
+  .playlist-modal {
+    padding-top: 24px;
+  }
+
+  .playlist-modal-card {
+    max-height: calc(100svh - 48px);
+  }
+
+  .playlist-modal-options {
+    max-height: min(210px, 30svh);
+  }
+}
+
+@media (max-width: 640px) {
+  .playlist-modal {
+    padding: 10px;
+    place-items: start center;
+  }
+
+  .playlist-modal-card {
+    max-height: calc(100svh - 20px);
+    padding: 20px;
+    gap: 10px;
+  }
+
+  .playlist-modal-card h2 {
+    font-size: 23px;
+  }
+
+  .playlist-modal-options {
+    max-height: min(170px, 27svh);
+  }
+
+  .playlist-block,
+  .playlist-block.custom-playlist {
+    min-height: auto;
+    height: auto;
+    max-height: 310px;
+  }
+
+  .playlist-block .compact-song-list,
+  .playlist-block.custom-playlist .compact-song-list {
+    max-height: 230px;
+  }
+}
+

@@ -1,0 +1,30 @@
+/* =========================
+   TABLET
+========================= */
+
+@media (min-width: 768px) {
+  .main {
+    padding: 104px 28px 170px;
+  }
+
+  .hero {
+    max-width: 620px;
+  }
+
+  .hero img {
+    max-height: min(56svh, 560px);
+  }
+
+  .music-info-main h2 {
+    font-size: clamp(46px, 8vw, 72px);
+  }
+
+  .library-main {
+    grid-template-columns: 1fr;
+  }
+
+  .favorites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  }
+}
+
