@@ -508,7 +508,7 @@ function renderFavorites() {
 }
 
 /* =========================
-   STATISTICS / PLAYLISTS / TEMA
+   STATISTICS / PLAYLISTS / THEME
 ========================= */
 
 function registerTrackPlay(music) {
