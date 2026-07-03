@@ -1,8 +1,8 @@
 /* =========================
-   AJUSTES SOLICITADOS - NÃO ALTERAR O RESTANTE
+   REQUESTED ADJUSTMENTS - DO NOT CHANGE THE REST
 ========================= */
 
-/* Tema claro: botões/ícones que estavam brancos ficam escuros */
+/* Light theme: buttons/icons that were white become dark */
 body.light-theme .player-controls-main button,
 body.light-theme .library-preview-controls button,
 body.light-theme .global-buttons button,
@@ -45,7 +45,7 @@ body.light-theme input[type="range"]::-moz-range-thumb {
   background: #18221d;
 }
 
-/* Modal de adicionar à playlist: sobe e nunca estoura a tela */
+/* Add-to-playlist modal: moves up and never overflows the screen */
 .playlist-modal {
   place-items: start center;
   padding-top: clamp(14px, 5vh, 46px);
@@ -63,7 +63,7 @@ body.light-theme input[type="range"]::-moz-range-thumb {
   max-height: min(220px, 32svh);
 }
 
-/* Cards/listas de playlists encolhem quando há poucas músicas, mas mantêm scroll quando passar do limite */
+/* Playlist cards/lists shrink when there are few songs, but keep scrolling after the limit */
 .playlist-block,
 .playlist-block.custom-playlist {
   min-height: auto;

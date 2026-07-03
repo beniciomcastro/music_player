@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,25 +13,25 @@
   </head>
 
   <body>
-    <aside class="sidebar" aria-label="Menu principal">
+    <aside class="sidebar" aria-label="Main menu">
       <header class="sidebar-header">
         <h1><i class="bi bi-soundwave" aria-hidden="true"></i></h1>
       </header>
 
-      <nav aria-label="Navegação do player">
+      <nav aria-label="Player navigation">
         <a href="#home" class="active" data-page="homePage">
           <i class="bi bi-house-door-fill" aria-hidden="true"></i>
           <span>Home</span>
         </a>
 
-        <a href="#biblioteca" data-page="libraryPage">
+        <a href="#library" data-page="libraryPage">
           <i class="bi bi-collection-fill" aria-hidden="true"></i>
-          <span>Biblioteca</span>
+          <span>Library</span>
         </a>
 
-        <a href="#favoritas" data-page="favoritesPage">
+        <a href="#favorites" data-page="favoritesPage">
           <i class="bi bi-heart-fill" aria-hidden="true"></i>
-          <span>Favoritas</span>
+          <span>Favorites</span>
         </a>
 
         <a href="#playlists" data-page="playlistsPage">
@@ -39,7 +39,7 @@
           <span>Playlists</span>
         </a>
 
-        <a href="#estatisticas" data-page="statsPage">
+        <a href="#statistics" data-page="statsPage">
           <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>
           <span>Stats</span>
         </a>
@@ -48,27 +48,27 @@
           id="themeToggleBtn"
           class="theme-toggle"
           type="button"
-          aria-label="Alternar tema"
+          aria-label="Toggle theme"
         >
           <i class="bi bi-moon-stars-fill"></i>
         </button>
 
-        <a href="#adicionar" data-page="addMusicPage">
+        <a href="#add" data-page="addMusicPage">
           <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
-          <span>Adicionar</span>
+          <span>Add</span>
         </a>
       </nav>
     </aside>
 
     <main id="homePage" class="main page active-page">
-      <section class="hero" aria-label="Player principal">
-        <p class="eyebrow">Minhas Músicas</p>
+      <section class="hero" aria-label="Main player">
+        <p class="eyebrow">My Music</p>
 
         <img
           id="heroCover"
           class="hero-cover"
           src="assets/capas/i_will_not_break.png"
-          alt="Capa da música"
+          alt="Song cover"
         />
 
         <header class="music-info-main">
@@ -82,7 +82,7 @@
               id="mainLyricsBtn"
               class="heart-main"
               type="button"
-              aria-label="Mostrar letra"
+              aria-label="Show lyrics"
             >
               <i class="bi bi-blockquote-right"></i>
             </button>
@@ -91,7 +91,7 @@
               id="mainFavoriteBtn"
               class="heart-main favorite-control"
               type="button"
-              aria-label="Favoritar música"
+              aria-label="Favorite song"
             >
               <i class="bi bi-heart"></i>
             </button>
@@ -104,7 +104,7 @@
             type="range"
             min="0"
             value="0"
-            aria-label="Progresso da música"
+            aria-label="Song progress"
           />
           <div>
             <span id="mainCurrentTime">0:00</span>
@@ -113,10 +113,10 @@
         </div>
 
         <section id="lyricsBox" class="lyrics-karaoke hidden">
-          <p id="lyricsLine">Clique no botão de letra</p>
+          <p id="lyricsLine">Click the lyrics button</p>
         </section>
 
-        <div class="player-controls-main" aria-label="Controles da música">
+        <div class="player-controls-main" aria-label="Song controls">
           <button id="mainShuffleBtn" class="player-control" type="button">
             <i class="bi bi-shuffle"></i>
           </button>
@@ -145,11 +145,11 @@
     </main>
 
     <main id="libraryPage" class="main library-main page" hidden>
-      <section class="library" aria-label="Biblioteca de músicas">
+      <section class="library" aria-label="Music library">
         <header class="library-header">
-          <p class="eyebrow">Sua biblioteca</p>
-          <h2>Músicas</h2>
-          <p>Todas as suas músicas em um só lugar.</p>
+          <p class="eyebrow">Your library</p>
+          <h2>Songs</h2>
+          <p>All your songs in one place.</p>
         </header>
 
         <form class="library-search" role="search">
@@ -157,26 +157,26 @@
           <input
             id="librarySearch"
             type="search"
-            placeholder="Buscar música ou artista"
-            aria-label="Buscar música ou artista"
+            placeholder="Search song or artist"
+            aria-label="Search song or artist"
           />
         </form>
 
         <section
           id="libraryMusicList"
           class="library-music-list"
-          aria-label="Lista de músicas"
+          aria-label="Song list"
         ></section>
       </section>
 
-      <aside class="library-preview" aria-label="Tocando agora">
-        <p class="eyebrow">Tocando agora</p>
+      <aside class="library-preview" aria-label="Now playing">
+        <p class="eyebrow">Now playing</p>
 
         <img
           id="libraryPlayerCover"
           class="library-preview-cover"
           src="assets/capas/i_will_not_break.png"
-          alt="Capa da música atual"
+          alt="Current song cover"
         />
 
         <h2 id="libraryPlayerTitle">I Will Not Break</h2>
@@ -211,17 +211,17 @@
     </main>
 
     <main id="favoritesPage" class="main favorites-main page" hidden>
-      <section class="favorites" aria-label="Músicas favoritas">
+      <section class="favorites" aria-label="Favorite songs">
         <header class="library-header">
-          <p class="eyebrow">Suas favoritas</p>
-          <h2>Favoritas</h2>
-          <p>Músicas marcadas para ouvir de novo.</p>
+          <p class="eyebrow">Your favorites</p>
+          <h2>Favorites</h2>
+          <p>Songs marked to listen again.</p>
         </header>
 
         <section
           id="favoritesGrid"
           class="favorites-grid"
-          aria-label="Músicas favoritas"
+          aria-label="Favorite songs"
         ></section>
       </section>
     </main>
@@ -229,34 +229,34 @@
     <main id="playlistsPage" class="main playlists-main page" hidden>
       <section class="playlists" aria-label="Playlists">
         <header class="library-header">
-          <p class="eyebrow">Organização</p>
+          <p class="eyebrow">Organization</p>
           <h2>Playlists</h2>
-          <p>Playlists salvas neste navegador.</p>
+          <p>Playlists saved in this browser.</p>
         </header>
 
         <form id="playlistForm" class="playlist-form">
           <input
             id="playlistName"
             type="text"
-            placeholder="Nome da nova playlist"
+            placeholder="New playlist name"
             required
           />
-          <button type="submit">Criar playlist</button>
+          <button type="submit">Create playlist</button>
         </form>
 
         <section class="smart-playlists">
           <article class="playlist-block">
-            <h3>Mais Ouvidas</h3>
+            <h3>Most Played</h3>
             <div id="mostPlayedList" class="compact-song-list"></div>
           </article>
 
           <article class="playlist-block">
-            <h3>Tocadas Recentemente</h3>
+            <h3>Recently Played</h3>
             <div id="recentPlayedList" class="compact-song-list"></div>
           </article>
 
           <article class="playlist-block">
-            <h3>Histórico de Reprodução</h3>
+            <h3>Playback History</h3>
             <div id="historyList" class="compact-song-list"></div>
           </article>
         </section>
@@ -269,11 +269,11 @@
     </main>
 
     <main id="statsPage" class="main stats-main page" hidden>
-      <section class="stats" aria-label="Estatísticas">
+      <section class="stats" aria-label="Statistics">
         <header class="library-header">
-          <p class="eyebrow">Seu uso</p>
-          <h2>Estatísticas</h2>
-          <p>Tudo salvo apenas no LocalStorage.</p>
+          <p class="eyebrow">Your usage</p>
+          <h2>Statistics</h2>
+          <p>Everything is saved only in LocalStorage.</p>
         </header>
 
         <section id="statsCards" class="stats-cards"></section>
@@ -288,47 +288,47 @@
     <main id="addMusicPage" class="main add-music-main page" hidden>
       <section class="add-music">
         <header class="library-header">
-          <p class="eyebrow">Nova música</p>
-          <h2>Adicionar</h2>
-          <p>Salve músicas localmente neste navegador.</p>
+          <p class="eyebrow">New song</p>
+          <h2>Add</h2>
+          <p>Save songs locally in this browser.</p>
         </header>
 
         <form id="addMusicForm" class="add-music-form">
           <label>
-            Nome da música
+            Song name
             <input id="newMusicTitle" type="text" required />
           </label>
 
           <label>
-            Artista
+            Artist
             <input id="newMusicArtist" type="text" required />
           </label>
 
           <label>
-            Álbum
+            Album
             <input id="newMusicAlbum" type="text" />
           </label>
 
           <label>
-            Arquivo MP3
+            MP3 file
             <input id="newMusicAudio" type="file" accept="audio/*" required />
           </label>
 
           <label>
-            Capa
+            Cover
             <input id="newMusicCover" type="file" accept="image/*" required />
           </label>
 
           <label>
-            Letra sincronizada .LRC
+            Synced .LRC lyrics
             <textarea
               id="newMusicLyrics"
               rows="8"
-              placeholder="[00:03.10]Primeira linha da música&#10;[00:07.50]Segunda linha da música"
+              placeholder="[00:03.10]First song line&#10;[00:07.50]Second song line"
             ></textarea>
           </label>
 
-          <button type="submit">Adicionar música</button>
+          <button type="submit">Add song</button>
 
           <p id="addMusicMessage" class="add-music-message"></p>
         </form>
@@ -336,22 +336,22 @@
     </main>
 
     <section id="nextMusicPreview" class="next-music-preview">
-      <img id="nextMusicCover" src="" alt="Próxima música" />
+      <img id="nextMusicCover" src="" alt="Next song" />
 
       <div class="next-music-info">
-        <small>Próxima</small>
+        <small>Next</small>
         <h3 id="nextMusicTitle">...</h3>
         <p id="nextMusicArtist">...</p>
       </div>
     </section>
 
     <footer class="global-player">
-      <section class="global-current" aria-label="Música atual">
+      <section class="global-current" aria-label="Current song">
         <img
           id="globalCover"
           class="global-current-cover"
           src="assets/capas/i_will_not_break.png"
-          alt="Capa da música atual"
+          alt="Current song cover"
         />
 
         <div class="global-current-info">
@@ -360,7 +360,7 @@
         </div>
       </section>
 
-      <section class="global-controls" aria-label="Controles do player">
+      <section class="global-controls" aria-label="Player controls">
         <div class="global-buttons">
           <button id="globalShuffleBtn" class="player-control" type="button">
             <i class="bi bi-shuffle"></i>
@@ -402,7 +402,7 @@
         </div>
       </section>
 
-      <section class="global-volume" aria-label="Controle de volume">
+      <section class="global-volume" aria-label="Volume control">
         <i class="bi bi-volume-up-fill"></i>
         <input id="volumeControl" type="range" min="0" max="100" value="100" />
       </section>
@@ -421,13 +421,13 @@
           id="playlistModalClose"
           class="playlist-modal-close"
           type="button"
-          aria-label="Fechar"
+          aria-label="Close"
         >
           <i class="bi bi-x-lg"></i>
         </button>
 
-        <p class="eyebrow">Escolha a playlist</p>
-        <h2 id="playlistModalTitle">Adicionar à playlist</h2>
+        <p class="eyebrow">Choose the playlist</p>
+        <h2 id="playlistModalTitle">Add to playlist</h2>
 
         <div id="playlistModalOptions" class="playlist-modal-options"></div>
 
@@ -435,9 +435,9 @@
           <input
             id="playlistModalNewName"
             type="text"
-            placeholder="Criar nova playlist"
+            placeholder="Create new playlist"
           />
-          <button type="submit">Criar e adicionar</button>
+          <button type="submit">Create and add</button>
         </form>
       </section>
     </div>

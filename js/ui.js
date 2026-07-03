@@ -1,5 +1,5 @@
 /* =========================
-   NAVEGAÇÃO INTERNA
+   INTERNAL NAVIGATION
 ========================= */
 
 function initPageNavigation() {
@@ -30,11 +30,11 @@ function initPageNavigation() {
 function getPageFromHash() {
   const hash = window.location.hash;
 
-  if (hash === "#biblioteca") return "libraryPage";
-  if (hash === "#favoritas") return "favoritesPage";
+  if (hash === "#library") return "libraryPage";
+  if (hash === "#favorites") return "favoritesPage";
   if (hash === "#playlists") return "playlistsPage";
-  if (hash === "#estatisticas") return "statsPage";
-  if (hash === "#adicionar") return "addMusicPage";
+  if (hash === "#statistics") return "statsPage";
+  if (hash === "#add") return "addMusicPage";
 
   return "homePage";
 }
@@ -70,9 +70,8 @@ function showPage(pageId) {
   });
 }
 
-
 /* =========================
-   CONTROLES
+   CONTROLS
 ========================= */
 
 function initControls() {
@@ -159,7 +158,7 @@ function initControls() {
       });
 
       if (addMusicMessage) {
-        addMusicMessage.textContent = "Música adicionada com sucesso.";
+        addMusicMessage.textContent = "Song added successfully.";
       }
 
       addMusicForm.reset();
@@ -291,7 +290,7 @@ function updateActiveButtons() {
 }
 
 /* =========================
-   FAVORITOS
+   FAVORITES
 ========================= */
 
 function getMusicKey(music) {
@@ -349,9 +348,8 @@ function updateFavoriteButtons() {
   }
 }
 
-
 /* =========================
-   BIBLIOTECA
+   LIBRARY
 ========================= */
 
 function getCurrentLibraryList() {
@@ -374,7 +372,7 @@ function renderLibrarySongs(list = getCurrentLibraryList()) {
   if (list.length === 0) {
     libraryMusicList.innerHTML = `
       <div class="library-empty">
-        Nenhuma música encontrada.
+        No songs found.
       </div>
     `;
     return;
@@ -396,13 +394,13 @@ function renderLibrarySongs(list = getCurrentLibraryList()) {
       </div>
 
       <div class="song-actions">
-        <button class="small-action favorite-mini" type="button" aria-label="Favoritar">
+        <button class="small-action favorite-mini" type="button" aria-label="Favorite">
           <i class="bi ${isFavorite(music) ? "bi-heart-fill" : "bi-heart"}"></i>
         </button>
-        <button class="small-action playlist-mini" type="button" aria-label="Adicionar à playlist">
+        <button class="small-action playlist-mini" type="button" aria-label="Add to playlist">
           <i class="bi bi-plus-lg"></i>
         </button>
-        <button class="library-status" type="button" aria-label="Música tocando">
+        <button class="library-status" type="button" aria-label="Song playing">
           <i class="bi bi-play-fill"></i>
           <span class="sound-bars" aria-hidden="true">
             <span></span><span></span><span></span>
@@ -444,7 +442,7 @@ function renderFavorites() {
   if (favorites.length === 0) {
     favoritesGrid.innerHTML = `
       <div class="library-empty">
-        Nenhuma música favorita ainda.
+        No favorite songs yet.
       </div>
     `;
     return;
@@ -473,7 +471,7 @@ function renderFavorites() {
 
       <h3>${music.title}</h3>
       <p>${music.artist}</p>
-      <small>${music.album || "Sem álbum"}</small>
+      <small>${music.album || "No album"}</small>
     `;
 
     card.addEventListener("click", () => {
@@ -510,7 +508,7 @@ function renderFavorites() {
 }
 
 /* =========================
-   ESTATÍSTICAS / PLAYLISTS / TEMA
+   STATISTICS / PLAYLISTS / TEMA
 ========================= */
 
 function registerTrackPlay(music) {
@@ -603,10 +601,10 @@ function renderStats() {
   const topMusic = ranking[0];
 
   statsCards.innerHTML = `
-    <article><strong>${playerStats.totalPlays}</strong><span>Total de músicas ouvidas</span></article>
-    <article><strong>${formatLongTime(playerStats.totalSeconds)}</strong><span>Tempo total ouvindo</span></article>
-    <article><strong>${topMusic ? topMusic.title : "-"}</strong><span>Música mais tocada</span></article>
-    <article><strong>${getMostPlayedArtist()}</strong><span>Artista mais ouvido</span></article>
+    <article><strong>${playerStats.totalPlays}</strong><span>Total songs played</span></article>
+    <article><strong>${formatLongTime(playerStats.totalSeconds)}</strong><span>Total listening time</span></article>
+    <article><strong>${topMusic ? topMusic.title : "-"}</strong><span>Most played song</span></article>
+    <article><strong>${getMostPlayedArtist()}</strong><span>Most listened artist</span></article>
   `;
 
   renderCompactSongs(topRankingList, ranking.slice(0, 10), true);
@@ -639,11 +637,11 @@ function openPlaylistModal(index) {
   const music = musics[index];
   if (!music) return;
 
-  playlistModalTitle.textContent = `Adicionar “${music.title}”`;
+  playlistModalTitle.textContent = `Add “${music.title}”`;
   playlistModalOptions.innerHTML = "";
 
   if (customPlaylists.length === 0) {
-    playlistModalOptions.innerHTML = `<div class="playlist-choice-empty">Você ainda não tem playlists. Crie uma nova abaixo.</div>`;
+    playlistModalOptions.innerHTML = `<div class="playlist-choice-empty">You do not have any playlists yet. Create a new one below.</div>`;
   } else {
     customPlaylists.forEach((playlist) => {
       const hasTrack = playlist.tracks.includes(getMusicKey(music));
@@ -653,9 +651,9 @@ function openPlaylistModal(index) {
       option.innerHTML = `
         <span>
           <strong>${playlist.name}</strong>
-          <small>${playlist.tracks.length} música${playlist.tracks.length === 1 ? "" : "s"}</small>
+          <small>${playlist.tracks.length} song${playlist.tracks.length === 1 ? "" : "s"}</small>
         </span>
-        <em>${hasTrack ? "Já adicionada" : "Adicionar"}</em>
+        <em>${hasTrack ? "Already added" : "Add"}</em>
       `;
       option.disabled = hasTrack;
       option.addEventListener("click", () =>
@@ -733,7 +731,7 @@ function renderPlaylists() {
   customPlaylistsGrid.innerHTML = "";
 
   if (customPlaylists.length === 0) {
-    customPlaylistsGrid.innerHTML = `<div class="library-empty">Crie sua primeira playlist acima.</div>`;
+    customPlaylistsGrid.innerHTML = `<div class="library-empty">Create your first playlist above.</div>`;
     return;
   }
 
@@ -797,7 +795,7 @@ function renderCompactSongs(container, tracks, showPlays = false) {
   container.innerHTML = "";
 
   if (!tracks || tracks.length === 0) {
-    container.innerHTML = `<div class="library-empty small-empty">Nada por aqui ainda.</div>`;
+    container.innerHTML = `<div class="library-empty small-empty">Nothing here yet.</div>`;
     return;
   }
 
@@ -805,13 +803,17 @@ function renderCompactSongs(container, tracks, showPlays = false) {
     const musicIndex = musics.findIndex(
       (music) => getMusicKey(music) === track.key,
     );
+
+    const music = musicIndex >= 0 ? musics[musicIndex] : null;
+    const cover = music?.cover || track.cover || "";
+
     const item = document.createElement("button");
     item.className = "compact-song";
     item.type = "button";
     item.dataset.index = musicIndex;
 
     item.innerHTML = `
-      <img src="${track.cover}" alt="${track.title}" />
+      <img src="${cover}" alt="${track.title}" />
       <span><strong>${track.title}</strong><small>${track.artist}</small></span>
       <em>${showPlays ? `${track.plays}x` : formatShortDate(track.lastPlayed)}</em>
     `;
@@ -833,7 +835,7 @@ function renderMusicListInto(container, tracks, playlist) {
   container.innerHTML = "";
 
   if (tracks.length === 0) {
-    container.innerHTML = `<div class="library-empty small-empty">Use o botão + nas músicas para adicionar aqui.</div>`;
+    container.innerHTML = `<div class="library-empty small-empty">Use the + button on songs to add them here.</div>`;
     return;
   }
 
@@ -849,7 +851,9 @@ function renderMusicListInto(container, tracks, playlist) {
       <button type="button">Remover</button>
     `;
 
-    item.addEventListener("click", () => playPlaylistFromTrack(playlist, index));
+    item.addEventListener("click", () =>
+      playPlaylistFromTrack(playlist, index),
+    );
     item.querySelector("button").addEventListener("click", (event) => {
       event.stopPropagation();
       playlist.tracks = playlist.tracks.filter(
@@ -940,9 +944,8 @@ function formatLongTime(seconds) {
 
 function formatShortDate(date) {
   if (!date) return "";
-  return new Date(date).toLocaleDateString("pt-BR", {
+  return new Date(date).toLocaleDateString("en-US", {
     day: "2-digit",
     month: "2-digit",
   });
 }
-

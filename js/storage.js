@@ -64,7 +64,7 @@ async function loadLocalMusics() {
 
 
 /* =========================
-   LOCALSTORAGE
+   LOCAL STORAGE
 ========================= */
 
 function loadPlayerStats() {

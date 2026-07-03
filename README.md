@@ -1,30 +1,31 @@
 # My Player
 
-A modern music player built with HTML, CSS, and JavaScript.
+A modern frontend-only music player built with HTML, CSS, and JavaScript.
 
-This project runs entirely on the frontend, with no backend required. All user data is stored locally in the browser using LocalStorage and IndexedDB.
+The project does not require a backend. User data is stored locally in the browser using LocalStorage and IndexedDB.
 
 ## Features
 
-### Music Playback
+### Playback
 
 - Play, pause, next, and previous controls
 - Shuffle mode
 - Repeat mode
 - Volume control
-- Progress bar with seek support
+- Seekable progress bar
 - Crossfade transitions between songs
 - Keyboard shortcuts
 
 ### Library
 
-- Music library management
+- Music library view
 - Search by title, artist, or album
-- Favorites system
-- Recently played tracks
-- Most played tracks
+- Favorites
+- Recently played songs
+- Most played songs
 - Listening history
 - Custom playlists
+- Local song upload through the app
 
 ### Statistics
 
@@ -32,26 +33,15 @@ This project runs entirely on the frontend, with no backend required. All user d
 - Total listening time
 - Most played song
 - Most listened artist
-- Top 5 most played songs
+- Top 10 ranking
 
 ### Interface
 
 - Dark mode
 - Light mode
 - Dynamic background based on album artwork
-- Responsive design for desktop, tablet, and mobile
+- Responsive layout for desktop, tablet, and mobile
 - Modern glassmorphism-inspired UI
-
-### Storage
-
-All information is saved locally:
-
-- Favorites
-- Playlists
-- Listening history
-- Statistics
-- Theme preference
-- Uploaded songs
 
 ## Keyboard Shortcuts
 
@@ -65,7 +55,7 @@ All information is saved locally:
 
 ## Running Locally
 
-Simply open `index.html` in your browser.
+Open `index.html` in your browser.
 
 For best compatibility, use a local web server.
 
@@ -116,20 +106,28 @@ http://localhost:8080
 ```txt
 .
 ├── index.html
-├── style.css
-├── script.js
+├── css/
+│   ├── style.css
+│   └── component CSS files
+├── js/
+│   ├── state.js
+│   ├── storage.js
+│   ├── player.js
+│   ├── ui.js
+│   └── script.js
 ├── assets/
 │   ├── capas/
 │   ├── musicas/
 │   └── lyrics/
 ├── Dockerfile
-├── docker-compose.yml
+├── compose.yaml
+├── LICENSE
 └── README.md
 ```
 
-## Adding New Songs
+## Adding New Songs in Code
 
-Edit the start of `script.js` and add a new item following the existing format:
+Edit `js/state.js` and add a new item following the existing format:
 
 ```json
 {
@@ -148,9 +146,11 @@ Then place:
 - The cover image inside `assets/capas/`
 - The lyrics file inside `assets/lyrics/`
 
-## Or use the "+" button in the website
+## Adding Songs in the App
 
-The music is saved in the browser, if you lose the history, you will lose the music
+Use the `+` button in the website.
+
+Songs added through the app are saved in the browser. If browser data is cleared, uploaded songs and listening history may be lost.
 
 ## Browser Storage
 
@@ -165,7 +165,7 @@ No user data is sent to external servers.
 
 - HTML5
 - CSS3
-- JavaScript (Vanilla)
+- JavaScript
 - LocalStorage
 - IndexedDB
 - Bootstrap Icons

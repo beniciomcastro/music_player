@@ -1,5 +1,5 @@
 /* =========================
-   FILA / PLAYLIST ATUAL
+    QUEUE 
 ========================= */
 
 function getActiveQueue() {
@@ -38,7 +38,7 @@ function getCurrentQueuePosition() {
 function getQueueLabelText() {
   return activeQueueName && activeQueueName !== "all"
     ? activeQueueName
-    : "Todas as músicas";
+    : "All songs";
 }
 
 function updateFooterQueueLabel() {
@@ -103,10 +103,9 @@ function playPlaylistFromTrack(playlist, musicIndex) {
 
   if (!setQueueFromIndices(indices, playlist.name, playlist.id)) return;
 
-  playGlobalMusic(
-    queuePosition >= 0 ? indices[queuePosition] : musicIndex,
-    { keepQueue: true },
-  );
+  playGlobalMusic(queuePosition >= 0 ? indices[queuePosition] : musicIndex, {
+    keepQueue: true,
+  });
 }
 
 /* =========================
@@ -299,7 +298,9 @@ function nextGlobalMusic() {
   const nextPosition =
     currentPosition === -1 ? 0 : (currentPosition + 1) % queue.length;
 
-  playGlobalMusic(queue[nextPosition], { keepQueue: activeQueueName !== "all" });
+  playGlobalMusic(queue[nextPosition], {
+    keepQueue: activeQueueName !== "all",
+  });
 }
 
 function prevGlobalMusic() {
@@ -322,7 +323,9 @@ function prevGlobalMusic() {
       ? 0
       : (currentPosition - 1 + queue.length) % queue.length;
 
-  playGlobalMusic(queue[prevPosition], { keepQueue: activeQueueName !== "all" });
+  playGlobalMusic(queue[prevPosition], {
+    keepQueue: activeQueueName !== "all",
+  });
 }
 
 function initGlobalPlayer() {
@@ -386,7 +389,7 @@ function initGlobalPlayer() {
 }
 
 /* =========================
-   ESTADO
+   STATE
 ========================= */
 
 function saveState() {
@@ -443,9 +446,8 @@ function syncProgress() {
   saveState();
 }
 
-
 /* =========================
-   SHUFFLE / REPEAT / PRÓXIMA
+   SHUFFLE / REPEAT / NEXT
 ========================= */
 
 function toggleShuffle() {
@@ -519,9 +521,8 @@ function updateNextMusicPreview() {
   nextMusicArtist.textContent = nextMusic.artist;
 }
 
-
 /* =========================
-   LETRA LOCAL
+   LOCAL LYRICS
 ========================= */
 
 function preloadAllLyrics() {
@@ -680,9 +681,8 @@ function toggleLyrics() {
   }
 }
 
-
 /* =========================
-   UTIL
+   USABLE
 ========================= */
 
 function formatTime(time) {
@@ -695,4 +695,3 @@ function formatTime(time) {
 
   return `${minutes}:${seconds}`;
 }
-

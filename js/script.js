@@ -1,15 +1,15 @@
 /* =========================
-   CARREGAMENTO
+   LOADING
 ========================= */
 
 async function loadMusicsFromJson() {
   const localMusics = await loadLocalMusics();
 
-  // Sem backend e sem arquivo JSON externo: a biblioteca base fica neste JS.
+  // No backend and no external JSON file: the base library stays in this JS.
   musics = [...DEFAULT_MUSICS, ...localMusics];
 
   if (!Array.isArray(musics) || musics.length === 0) {
-    throw new Error("Nenhuma música encontrada");
+    throw new Error("No songs found");
   }
 
   if (currentIndex < 0 || currentIndex >= musics.length) {
@@ -47,7 +47,7 @@ async function initApp() {
     if (libraryMusicList) {
       libraryMusicList.innerHTML = `
         <div class="library-empty">
-          Erro ao carregar suas músicas.
+          Error loading your songs.
         </div>
       `;
     }
