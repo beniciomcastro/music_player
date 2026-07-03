@@ -53,7 +53,7 @@ The project does not require a backend. User data is stored locally in the brows
 | ↑     | Volume Up      |
 | ↓     | Volume Down    |
 
-##Web Link
+## Web Link
 
 ```txt
 https://music-player-p0wr.onrender.com/#home
